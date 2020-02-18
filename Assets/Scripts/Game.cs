@@ -9,7 +9,8 @@ public class Game : MonoBehaviour
 {
     public int round = -1;
     public int currentPlayer;
-    public Player[3] players;
+    public int nPlayers = 3;
+    public Player[] players = new Player[nPlayers]();
     public Player player { get => this.players[this.currentPlayer]}
     public int nMovesLeft = 3;
     public int timeLeft = 0;
@@ -20,22 +21,17 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
-        this.players = new Players[]{Player(), Player(), Player()}; 
         this.currentPlayer = this.players.Length - 1;
         this.startTime = DateTime.Now;
-        this.initializeBoard()
+        //Board()
         this.presentStartingScreen()
     }
 
-    void initializeBoard() {
-        Board()
-	}
-
-    void presentStartingScreen() {
-        StartScreen()
-	}
-
-    void startGame() {
+    void startGame(string[] names) {
+        players[0] = Player(name=names[0], type=PlayerTypes.Gunner)
+	    for (int i=1; i < names.Length; i++) {
+            players[i] = Player(name=names[i], type=PlayerTypes.Knifer)
+		}
         this.nextTurn();
 	}
 

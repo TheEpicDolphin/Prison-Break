@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System.IO;
 
+
 public class Edge
 {
     public Vector2 p1;
@@ -504,3 +505,4 @@ public class Board : MonoBehaviour
 
 
 }
+*/
