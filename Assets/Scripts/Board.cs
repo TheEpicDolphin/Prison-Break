@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+
+/* 
 public struct Edge
 {
     public Vector2 p1;
@@ -112,3 +114,4 @@ public class Board : MonoBehaviour
 
 
 }
+*/
