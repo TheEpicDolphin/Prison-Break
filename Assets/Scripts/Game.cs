@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using System.Globalization;
 
-
+/*
 public class Game : MonoBehaviour
 {
     public int round = -1;
@@ -90,3 +90,4 @@ public class Game : MonoBehaviour
 
     
 }
+*/
