@@ -2,6 +2,7 @@ Logs/
 Library/
 Temp/
 Packages/
+HTML/
 
 *.sln
 *.csproj
