@@ -51,11 +51,12 @@ public class Tile
 {
     public Vector2 center;
     public List<Edge> walls;
-    public Tile(Vector2 center, List<Edge> walls)
+    public int id;
+    public Tile(int id, Vector2 center, List<Edge> walls)
     {
+        this.id = id;
         this.center = center;
         this.walls = walls;
-        
     }
 }
 
@@ -73,7 +74,10 @@ public class Board : MonoBehaviour
     float wallLength = 1.0f;
 
     public GameObject player;
+    int curPlayerTileID;
     GameObject playerView;
+
+    bool wait;
     // Start is called before the first frame update
     void Start()
     {
@@ -96,6 +100,10 @@ public class Board : MonoBehaviour
 
         ParseBoardASCIIArt("board_ascii.txt");
         CreateBoard();
+
+        player.transform.position = tiles[0].center;
+        curPlayerTileID = 0;
+        wait = false;
     }
 
     // Update is called once per frame
@@ -108,6 +116,33 @@ public class Board : MonoBehaviour
         Debug.DrawRay(player.transform.position, 15.0f * rightFunnel, Color.red);
         Debug.DrawRay(player.transform.position, 15.0f * Vector2.right, Color.yellow);
         ConstructPlayerView(playerPos2D, leftFunnel, rightFunnel);
+
+
+        List<int> neighbors = GetAdjacentTileIDs(curPlayerTileID);
+        if (Input.GetKey(KeyCode.D) && this.wait == false)
+        {
+            this.wait = true;
+            MovePlayerToTile(neighbors[0], () => 
+            {
+                curPlayerTileID = neighbors[0];
+                this.wait = false;
+            });
+        }
+        /*
+        else if (Input.GetKey(KeyCode.W))
+        {
+
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+
+        }
+        else if(Input.GetKey(KeyCode.S))
+        {
+
+        }
+        */
+
     }
 
 
@@ -160,7 +195,7 @@ public class Board : MonoBehaviour
                 {
                     walls.Add(new Edge(new Vector2((j + 1) * tileWidth, i * tileHeight), new Vector2((j + 1) * tileWidth, (i + 1) * tileHeight)));
                 }
-                this.tiles[j + i * numCols] = new Tile(tileCenter, walls);
+                this.tiles[j + i * numCols] = new Tile(j + i * numCols, tileCenter, walls);
             }
         }
 
@@ -281,6 +316,56 @@ public class Board : MonoBehaviour
             }
             
         }
+    }
+
+    void MovePlayerToTile(int targetTileID, System.Action callback)
+    {
+        StartCoroutine(MoveToTile(player.transform, this.tiles[targetTileID].center, callback));
+    }
+
+    IEnumerator MoveToTile(Transform playerTrans, Vector2 targetPos, System.Action callback)
+    {
+        Vector2 origPos = playerTrans.position;
+        float totalT = 1.0f;
+        float t = 0.0f;
+        while (t < totalT)
+        {
+            
+            playerTrans.position = Vector2.Lerp(origPos, targetPos, t);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        playerTrans.position = targetPos;
+        callback();
+    }
+
+    /*
+    void RotatePlayerToDir(Vector2 dir)
+    {
+        StartCoroutine(FaceDir());
+    }
+
+    IEnumerator FaceDir()
+    {
+        float totalT = 1.0f;
+        float t = 0.0f;
+        while (t < totalT)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDir, Vector3.back);
+            player.transform.rotation = Quaternion.Slerp(origRotation, targetRotation, Time.deltaTime);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+        player.transform.rotation = targetRotation;
+    }
+    */
+    
+
+    List<int> GetAdjacentTileIDs(int currentTileID)
+    {
+        List<int> neighborIDs = adjList[currentTileID];
+        return neighborIDs;
     }
 
     /*
@@ -416,104 +501,6 @@ public class Board : MonoBehaviour
         */
 
     }
-
-
-
-    /*
-   List<AngleRange> SortedWallAngleRanges(Vector2 currentPos, Vector2 leftFunnel, Vector2 rightFunnel)
-   {
-       List<AngleRange> walls = new List<AngleRange>();
-       foreach(Tile tile in this.tiles)
-       {
-           for(int i = 0; i < tile.walls.Count; i++)
-           {
-               Edge unorientedEdge = tile.walls[i];
-               Vector2 v1 = unorientedEdge.p1 - currentPos;
-               Vector2 v2 = unorientedEdge.p2 - currentPos;
-               float theta1 = Vector2.SignedAngle(v1, rightFunnel);
-               float theta2 = Vector2.SignedAngle(v2, rightFunnel);
-               float totalTheta = Vector2.SignedAngle(leftFunnel, rightFunnel);
-
-               Edge orientedEdge;
-               //Orient edges so that they go counterclockwise around player
-               if (theta1 > theta2)
-               {
-                   orientedEdge = new Edge(v2, v1);
-               }
-               else
-               {
-                   orientedEdge = new Edge(v1, v2);
-               }
-
-               if(theta1 < totalTheta && theta2 > 0.0f)
-               {
-                   walls.Add(new AngleRange(orientedEdge, Mathf.Max(theta1, 0.0f), Mathf.Min(theta2, totalTheta)));
-               }
-
-           } 
-       }
-
-       //Sort by start angle for each angle range
-       return walls.OrderBy(angleRange => angleRange.t1).ToList();
-   }
-
-   List<Vector2> ConstructPlayerView(Vector2 currentPos, Vector2 leftFunnel, Vector3 rightFunnel)
-   {
-
-
-       List<AngleRange> wallAngleRanges = SortedWallAngleRanges(currentPos, leftFunnel, rightFunnel);
-       List<AngleRange> mergedWallAngleRanges = new List<AngleRange>();
-
-
-       for(int i = 0; i < wallAngleRanges.Count; i++)
-       {
-           List<AngleRange> tempAngleRanges = new List<AngleRange>();
-           AngleRange curAngleRange = wallAngleRanges[i];
-           AngleRange mergedAngleRange = curAngleRange;
-           for(int j = i + 1; j < wallAngleRanges.Count; j++)
-           {
-               if((curAngleRange.edge.p1 - currentPos).magnitude > (wallAngleRanges[j].edge.p1 - currentPos).magnitude)
-               {
-                   mergedAngleRange = new AngleRange(curAngleRange.edge, curAngleRange.t1, wallAngleRanges[j].t1);
-                   tempAngleRanges.Add(wallAngleRanges[j]);
-               }
-               else if (curAngleRange.t2 < wallAngleRanges[j].t1)
-               {
-                   tempAngleRanges.Add(wallAngleRanges[j]);
-               }
-               else if (curAngleRange.t2 > wallAngleRanges[j].t1 && curAngleRange.t2 < wallAngleRanges[j].t2)
-               {
-                   tempAngleRanges.Add(new AngleRange(wallAngleRanges[j].edge, curAngleRange.t2, wallAngleRanges[j].t2));
-               }
-               else if(curAngleRange.t2 > wallAngleRanges[j].t2)
-               {
-                   //Effectively ignore this angle range
-                   continue;
-               }
-           }
-           wallAngleRanges = tempAngleRanges;
-           mergedWallAngleRanges.Add(mergedAngleRange);
-       }
-
-
-
-
-       List<Vector2> hull = new List<Vector2>();
-       hull.Add(currentPos);
-
-       for(int i = 0; i < mergedWallAngleRanges.Count; i++)
-       {
-           AngleRange angleRange = mergedWallAngleRanges[i];
-           Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;
-           hull.Add(angleRange.edge.Intersect(currentPos, dir1));
-
-           Vector2 dir2 = (Quaternion.AngleAxis(angleRange.t2, new Vector3(0, 0, 1)) * rightFunnel).normalized;
-           hull.Add(angleRange.edge.Intersect(currentPos, dir2));
-       }
-       return hull;
-   }
-   */
-
 
 
 }
