@@ -1,6 +1,7 @@
 Logs/
 Library/
 Temp/
+Packages/
 
 *.sln
 *.csproj
