@@ -69,6 +69,7 @@ public class Board : MonoBehaviour
     Tile[] tiles;
     GameObject[] tileGOs;
     List<GameObject> wallsGOs;
+    public Camera cam;
     float tileWidth = 10.0f;
     float tileHeight = 10.0f;
     float wallWidth = 1.0f;
@@ -82,6 +83,11 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tileWidth = 2.0f * cam.orthographicSize / numCols;
+        tileHeight = 2.0f * cam.orthographicSize / numRows;
+        wallWidth = 0.1f * tileWidth;
+        wallLength = tileHeight;
+
         playerView = new GameObject();
         playerView.transform.parent = player.transform;
         playerView.transform.localPosition = Vector2.zero;
