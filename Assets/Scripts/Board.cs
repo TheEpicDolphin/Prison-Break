@@ -69,10 +69,10 @@ public class Board : MonoBehaviour
     Tile[] tiles;
     GameObject[] tileGOs;
     List<GameObject> wallsGOs;
-    float tileWidth = 1.0f;
-    float tileHeight = 1.0f;
-    float wallWidth = 0.1f;
-    float wallLength = 1.0f;
+    float tileWidth = 10.0f;
+    float tileHeight = 10.0f;
+    float wallWidth = 1.0f;
+    float wallLength = 10.0f;
 
     public GameObject player;
     int curPlayerTileID;
@@ -292,6 +292,8 @@ public class Board : MonoBehaviour
             Tile tile = this.tiles[i];
             //Create gameobjects here
             tileGOs[i] = new GameObject();
+            tileGOs[i].transform.parent = transform;
+            tileGOs[i].layer = gameObject.layer;
             tileGOs[i].transform.position = tile.center;
             // Set up game object with mesh;
             tileGOs[i].AddComponent<MeshRenderer>();
@@ -303,6 +305,8 @@ public class Board : MonoBehaviour
             {
                 GameObject wallGO = new GameObject();
                 Vector2 wallCenter2D = (tile.walls[j].p2 + tile.walls[j].p1) / 2;
+                //wallGO.transform.parent = transform;
+                //wallGo.layer = gameObject.layer;
                 wallGO.transform.position = new Vector3(wallCenter2D.x, wallCenter2D.y, -0.5f);
                 Vector2 edgeDir = (tile.walls[j].p2 - tile.walls[j].p1).normalized;
                 //transform.forward points in -z direction (into screen)
@@ -502,6 +506,5 @@ public class Board : MonoBehaviour
         */
 
     }
-
-
 }
+
