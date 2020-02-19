@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Globalization;
 
 
-
+/*
 public class Game : MonoBehaviour
 {
     public int round = -1;
@@ -75,9 +75,7 @@ public class Game : MonoBehaviour
     }
     
 }
-
-
-/*
+*/
 
 
 public class Game : MonoBehaviour
@@ -107,6 +105,7 @@ public class Game : MonoBehaviour
     public GameObject stayButton;
     public List<Tile> tileButtons;
 
+    /*
     // Start is called before the first frame update
     void Start()
     {   
@@ -173,6 +172,7 @@ public class Game : MonoBehaviour
     void watch()
     {
     }
+    */
 
     // Update is called once per frame
     void Update()
@@ -199,6 +199,7 @@ public class Game : MonoBehaviour
         }
     }
 
+    /*
     move(tileLoc)
         If tileLoc in Board.getValidMoves(self.Player[playerTurn]): player.move(tileLoc), updateView(), self.movesLeft -= 1 else raise error
         For i, player in enumerate(self.players):
@@ -208,9 +209,9 @@ public class Game : MonoBehaviour
         If self.movesLeft == 0: self.showEndTurn()
         showEndTurn()
         self.endTurnButton.show()
-
+    */
 
     
 }
 
-*/
+

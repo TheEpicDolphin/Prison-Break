@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public Camera cam;
     public int currentTileIdx;
     int numMoves;
-    List<LineRenderer> playerView;
+    public LineRenderer playerView;
     // Start is called before the first frame update
     void Start()
     {
@@ -56,19 +56,22 @@ public class Player : MonoBehaviour
     public IEnumerator MoveToTile(Tile tile)
     {
         Vector2 origPos = transform.position;
+        Vector3 origCamPos = cam.transform.position;
         Vector2 targetPos = tile.center;
+        Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, cam.transform.position.z);
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
 
             transform.position = Vector2.Lerp(origPos, targetPos, t);
+            cam.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t);
             t += Time.deltaTime;
             yield return null;
         }
         transform.position = targetPos;
+        cam.transform.position = targetCamPos;
 
-        //StartCoroutine(PresentMovementOptions());
         PresentMovementOptions();
     }
 

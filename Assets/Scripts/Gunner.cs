@@ -227,7 +227,7 @@ public class Gunner : Player
     }
     */
     
-    public IEnumerator Watch(Tile tile)
+    public IEnumerator Watch()
     {
 
         ShowExtendedCone();
@@ -257,33 +257,27 @@ public class Gunner : Player
     void ShowExtendedCone()
     {
         List<Vector2> extendedConeHull = GetExtendedCone();
-
-
-        LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.widthMultiplier = 0.2f;
-        lineRenderer.positionCount = lengthOfLineRenderer;
-
-        // A simple 2 color gradient with a fixed alpha of 1.0f.
-        float alpha = 1.0f;
-        Gradient gradient = new Gradient();
-        gradient.SetKeys(
-            new GradientColorKey[] { new GradientColorKey(c1, 0.0f), new GradientColorKey(c2, 1.0f) },
-            new GradientAlphaKey[] { new GradientAlphaKey(alpha, 0.0f), new GradientAlphaKey(alpha, 1.0f) }
-        );
-        lineRenderer.colorGradient = gradient;
-
-        foreach (Vector2 pt in extendedConeHull)
+        Vector3[] vertices = new Vector3[extendedConeHull.Count];
+        for(int i = 0; i < extendedConeHull.Count; i++)
         {
-            //Draw;
+            Vector2 vert2d = extendedConeHull[i];
+            vertices[i] = new Vector3(vert2d.x, vert2d.y, -0.1f);
         }
+
+        GameObject playerViewGO = new GameObject();
+        this.playerView = playerViewGO.AddComponent<LineRenderer>();
+        this.playerView.material = new Material(Shader.Find("Sprites/Default"));
+        this.playerView.widthMultiplier = 0.2f;
+        this.playerView.positionCount = extendedConeHull.Count;
+        this.playerView.SetPositions(vertices);
 
     }
 
     void HideExtendedCone()
     {
-
+        playerView.gameObject.SetActive(false);
     }
+
 
     /*
     public IEnumerator EndTurn()
