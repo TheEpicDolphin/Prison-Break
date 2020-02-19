@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using System.Globalization;
 
-/*
+
 public class Game : MonoBehaviour
 {
     public int round = -1;
@@ -23,8 +23,6 @@ public class Game : MonoBehaviour
     {   
         this.currentPlayer = this.players.Length - 1;
         this.startTime = DateTime.Now;
-        //Board()
-        this.presentStartingScreen()
     }
 
     void startGame(string[] names) {
@@ -40,11 +38,7 @@ public class Game : MonoBehaviour
 	}
 
     void startTransition() {
-        this.transition.show(this.players[this.currentPlayer].name)
-	}
-
-    void endTransition() {
-        this.transition.close()
+        transitionPanel.show(player.name)
 	}
 
     void updateTimer() {
@@ -59,21 +53,32 @@ public class Game : MonoBehaviour
 	}
 
     void nextTurn() {
-        this.nMovesLeft = 3;
-        this.currentPlayer = (this.currentPlayer + 1) % this.players.Length;
-        if (this.currentPlayer == 0) {
-            this.round += 1;
+        nMovesLeft = 3;
+        currentPlayer = (currentPlayer + 1) % players.Length;
+        if (currentPlayer == 0) {
+            round += 1;
         }
-        moveCamera(this.player);  // follow the player
-        this.updateView();
-        if (this.player.extendedView) {
-            this.extendView();
+        moveCamera(player);  // follow the player
+        this.updateView(player);
+        if (player.extendedView) {
+            extendView(player);
 		}
-        if (this.player.type == PlayerTypes.gunner) {
-            this.watchButton.show();
-            this.player.extendedView = false;
+        if (player.type == PlayerTypes.gunner) {
+            watchButton.setActive(true);
+            player.extendedView = false;
+		} else {
+            watchButton.setActive(false);  
 		}
-        this.startTransition();
+        startTransition();
+	}
+
+    void updateView() {
+        //show the tiles the user can see (just 4 tiles)
+        //stretch: highlight possible moves
+	}
+
+    void extendView() {
+        //show full cone view (infinite)
 	}
 
     void watch()
@@ -86,4 +91,3 @@ public class Game : MonoBehaviour
 
     
 }
-*/
