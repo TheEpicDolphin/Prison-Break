@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Globalization;
+using UnityEngine.UI;
 
 
 /*
@@ -173,6 +174,11 @@ public class Game : MonoBehaviour
     {
     }
     */
+
+    private void Start()
+    {
+        watchButton.GetComponent<Button>().interactable = false;
+    }
 
     // Update is called once per frame
     void Update()

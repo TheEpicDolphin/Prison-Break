@@ -41,6 +41,7 @@ public class PanelFunctions : MonoBehaviour
             neighborTile.gameObject.layer = 2;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
+        Game.Instance.watchButton.GetComponent<Button>().interactable = false;
         StartCoroutine(Game.Instance.currentPlayer.Watch());
     }
 

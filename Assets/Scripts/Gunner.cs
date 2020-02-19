@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-enum GunnerAction { Move, Watch, Stay };
-enum FacingDirection { Right, Up, Left, Down };
+using UnityEngine.UI;
 
 public class Gunner : Player
 {
@@ -74,6 +72,7 @@ public class Gunner : Player
             neighborTile.gameObject.layer = 0;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         }
+        Game.Instance.watchButton.GetComponent<Button>().interactable = true;
     }
 
 

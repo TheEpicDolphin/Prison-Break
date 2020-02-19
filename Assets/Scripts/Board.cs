@@ -71,7 +71,6 @@ public class Tile : MonoBehaviour
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
         StartCoroutine(Game.Instance.currentPlayer.MoveToTile(this));
-        //StartCoroutine(Game.Instance.currentPlayer.Watch());
     }
 }
 
