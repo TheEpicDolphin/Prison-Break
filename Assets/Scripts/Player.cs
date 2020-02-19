@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public Camera cam;
     public int currentTileIdx;
     int numMoves;
+    List<LineRenderer> playerView;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,13 +68,20 @@ public class Player : MonoBehaviour
         }
         transform.position = targetPos;
 
-        StartCoroutine(PresentMovementOptions());
+        //StartCoroutine(PresentMovementOptions());
+        PresentMovementOptions();
     }
 
+    public virtual void PresentMovementOptions()
+    {
+
+    }
+
+    /*
     public virtual IEnumerator PresentMovementOptions()
     {
         
         yield return null;
     }
-    
+    */
 }

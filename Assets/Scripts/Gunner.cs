@@ -47,7 +47,8 @@ public class Gunner : Player
         }));
         yield return new WaitUntil(() => waitFlags == 0b0001);
 
-        StartCoroutine(PresentMovementOptions());
+        //StartCoroutine(PresentMovementOptions());
+        PresentMovementOptions();
 
         /*
         int numMoves = 0;
@@ -173,17 +174,29 @@ public class Gunner : Player
 
     */
 
-
-    public override IEnumerator PresentMovementOptions()
+    public override void PresentMovementOptions()
     {
-
         Tile curTile = board.GetTileFromID(this.currentTileIdx);
-        List<Tile> adjacentTiles = board.GetAdjacentTilesFromID(this.currentTileIdx);
-        foreach (Tile neighborTile in adjacentTiles)
+        Game.Instance.tileButtons = board.GetAdjacentTilesFromID(this.currentTileIdx);
+        foreach (Tile neighborTile in Game.Instance.tileButtons)
         {
             neighborTile.gameObject.layer = 0;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         }
+    }
+
+    /*
+    public override IEnumerator PresentMovementOptions()
+    {
+
+        Tile curTile = board.GetTileFromID(this.currentTileIdx);
+        Game.Instance.tileButtons = board.GetAdjacentTilesFromID(this.currentTileIdx);
+        foreach (Tile neighborTile in Game.Instance.tileButtons)
+        {
+            neighborTile.gameObject.layer = 0;
+            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+        }
+
         while (true)
         {
             //This creates ray through mouse position
@@ -210,8 +223,9 @@ public class Gunner : Player
             yield return null;
 
         }
+        
     }
-
+    */
     
     public IEnumerator Watch(Tile tile)
     {
@@ -243,7 +257,23 @@ public class Gunner : Player
     void ShowExtendedCone()
     {
         List<Vector2> extendedConeHull = GetExtendedCone();
-        foreach(Vector2 pt in extendedConeHull)
+
+
+        LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.widthMultiplier = 0.2f;
+        lineRenderer.positionCount = lengthOfLineRenderer;
+
+        // A simple 2 color gradient with a fixed alpha of 1.0f.
+        float alpha = 1.0f;
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] { new GradientColorKey(c1, 0.0f), new GradientColorKey(c2, 1.0f) },
+            new GradientAlphaKey[] { new GradientAlphaKey(alpha, 0.0f), new GradientAlphaKey(alpha, 1.0f) }
+        );
+        lineRenderer.colorGradient = gradient;
+
+        foreach (Vector2 pt in extendedConeHull)
         {
             //Draw;
         }

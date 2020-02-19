@@ -7,10 +7,30 @@ using System.Globalization;
 
 public class Game : MonoBehaviour
 {
+    private static Game _instance;
+    public static Game Instance { get { return _instance; } }
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
+
+
     public int knifersLeft = 2;
     public Player[] players = new Player[1];
     bool gameStarted = false;
+    public Player currentPlayer;
 
+    public GameObject watchButton;
+    public GameObject stayButton;
+    public List<Tile> tileButtons;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +56,7 @@ public class Game : MonoBehaviour
         while (true)
         {
             waitFlags = 0b0000;
-            Player currentPlayer = this.players[i];
+            currentPlayer = this.players[i];
             StartCoroutine(currentPlayer.StartTurn());
             yield return new WaitUntil(() => waitFlags == 0b0001);
             

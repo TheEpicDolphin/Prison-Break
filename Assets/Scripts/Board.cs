@@ -48,20 +48,7 @@ public class AngleRange
     }
 }
 
-public class Button : MonoBehaviour
-{
-    public virtual void Click(Player player)
-    {
-
-    }
-
-    public virtual void OnHover()
-    {
-
-    }
-}
-
-public class Tile : Button
+public class Tile : MonoBehaviour
 {
     public Vector2 center;
     public List<Edge> walls;
@@ -75,44 +62,39 @@ public class Tile : Button
         this.walls = walls;
     }
 
-    public override void Click(Player player)
+    public void OnMouseDown()
     {
-        player.currentTileIdx = id;
-        StartCoroutine(player.MoveToTile(this));
-    }
-
-    public override void OnHover()
-    {
-
+        Game.Instance.currentPlayer.currentTileIdx = id;
+        foreach (Tile neighborTile in Game.Instance.tileButtons)
+        {
+            neighborTile.gameObject.layer = 2;
+            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+        }
+        StartCoroutine(Game.Instance.currentPlayer.MoveToTile(this));
     }
 }
 
-public class Watch : Button
+/*
+public class Watch : MonoBehaviour
 {
-    public override void Click(Player player)
+    public void OnMouseDown()
     {
         //StartCoroutine(player.Watch(this));
     }
 
-    public override void OnHover()
-    {
-        
-    }
 }
 
-public class Stay : Button
+public class Stay : MonoBehaviour
 {
-    public override void Click(Player player)
+    public void OnMouseDown()
     {
         //Do nothing
         //StartCoroutine(player.EndTurn(this));
     }
 
-    public override void OnHover()
-    {
-
-    }
 }
+*/
+
 
 public class Board : MonoBehaviour
 {
@@ -126,9 +108,6 @@ public class Board : MonoBehaviour
     float tileHeight = 10.0f;
     float wallWidth = 1.0f;
     float wallLength = 10.0f;
-
-    public GameObject watchButton;
-    public GameObject stayButton;
 
     // Start is called before the first frame update
     void Start()
