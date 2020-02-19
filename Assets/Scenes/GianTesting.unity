@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 363328357}
   - component: {fileID: 363328356}
+  - component: {fileID: 363328358}
   m_Layer: 8
   m_Name: player
   m_TagString: Untagged
@@ -185,12 +186,29 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 363328355}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.14, y: 1.93, z: -2}
+  m_LocalPosition: {x: 3.14, y: 2.61, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &363328358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363328355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d86297c6654cab458268b8e0a580f67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerName: 
+  board: {fileID: 1579082484}
+  game: {fileID: 0}
+  cam: {fileID: 519420031}
+  currentTileIdx: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,8 +255,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.7
-    height: 0.9
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -267,7 +285,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: -10, z: -10}
+  m_LocalPosition: {x: 5, y: 5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -363,6 +381,7 @@ GameObject:
   - component: {fileID: 1579082486}
   - component: {fileID: 1579082485}
   - component: {fileID: 1579082484}
+  - component: {fileID: 1579082487}
   m_Layer: 8
   m_Name: Board
   m_TagString: Untagged
@@ -383,7 +402,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  player: {fileID: 363328355}
+  watchButton: {fileID: 0}
+  stayButton: {fileID: 0}
 --- !u!212 &1579082485
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -446,3 +466,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1579082487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1579082483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b95a49b650525643af8c3a1f0ffee71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knifersLeft: 2
+  players:
+  - {fileID: 363328358}

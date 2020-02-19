@@ -48,16 +48,69 @@ public class AngleRange
     }
 }
 
-public class Tile
+public class Button : MonoBehaviour
+{
+    public virtual void Click(Player player)
+    {
+
+    }
+
+    public virtual void OnHover()
+    {
+
+    }
+}
+
+public class Tile : Button
 {
     public Vector2 center;
     public List<Edge> walls;
     public int id;
+
+
     public Tile(int id, Vector2 center, List<Edge> walls)
     {
         this.id = id;
         this.center = center;
         this.walls = walls;
+    }
+
+    public override void Click(Player player)
+    {
+        player.currentTileIdx = id;
+        StartCoroutine(player.MoveToTile(this));
+    }
+
+    public override void OnHover()
+    {
+
+    }
+}
+
+public class Watch : Button
+{
+    public override void Click(Player player)
+    {
+        //StartCoroutine(player.Watch(this));
+    }
+
+    public override void OnHover()
+    {
+        
+    }
+}
+
+public class Stay : Button
+{
+    public override void Click(Player player)
+    {
+        //Do nothing
+        //StartCoroutine(player.EndTurn(this));
+    }
+
+    public override void OnHover()
+    {
+
     }
 }
 
@@ -67,7 +120,6 @@ public class Board : MonoBehaviour
     int numCols = 5;
     List<int>[] adjList;
     Tile[] tiles;
-    GameObject[] tileGOs;
     List<GameObject> wallsGOs;
     public Camera cam;
     float tileWidth = 10.0f;
@@ -75,26 +127,17 @@ public class Board : MonoBehaviour
     float wallWidth = 1.0f;
     float wallLength = 10.0f;
 
-    public GameObject player;
-    int curPlayerTileID;
-    GameObject playerView;
+    public GameObject watchButton;
+    public GameObject stayButton;
 
-    bool wait;
     // Start is called before the first frame update
     void Start()
     {
+        cam.transform.position = new Vector3(cam.orthographicSize, cam.orthographicSize, -10);
         tileWidth = 2.0f * cam.orthographicSize / numCols;
         tileHeight = 2.0f * cam.orthographicSize / numRows;
         wallWidth = 0.1f * tileWidth;
         wallLength = tileHeight;
-
-        playerView = new GameObject();
-        playerView.transform.parent = player.transform;
-        playerView.transform.localPosition = Vector2.zero;
-        playerView.transform.localRotation = Quaternion.identity;
-        playerView.AddComponent<MeshRenderer>();
-        playerView.GetComponent<MeshRenderer>().material.color = Color.green;
-        this.playerView.AddComponent<MeshFilter>();
 
         adjList = new List<int>[numRows * numCols];
         for(int i = 0; i < adjList.Length; i++)
@@ -102,53 +145,15 @@ public class Board : MonoBehaviour
             adjList[i] = new List<int>();
         }
         tiles = new Tile[numRows * numCols];
-        tileGOs = new GameObject[numRows * numCols];
         wallsGOs = new List<GameObject>();
 
         ParseBoardASCIIArt("board_ascii.txt");
         CreateBoard();
-
-        player.transform.position = tiles[0].center;
-        curPlayerTileID = 0;
-        wait = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 playerPos2D = new Vector2(player.transform.position.x, player.transform.position.y);
-        Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * player.transform.up).normalized;
-        Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * player.transform.up).normalized;
-        Debug.DrawRay(player.transform.position, 15.0f * leftFunnel, Color.green);
-        Debug.DrawRay(player.transform.position, 15.0f * rightFunnel, Color.red);
-        Debug.DrawRay(player.transform.position, 15.0f * Vector2.right, Color.yellow);
-        ConstructPlayerView(playerPos2D, leftFunnel, rightFunnel);
-
-
-        List<int> neighbors = GetAdjacentTileIDs(curPlayerTileID);
-        if (Input.GetKey(KeyCode.D) && this.wait == false)
-        {
-            this.wait = true;
-            MovePlayerToTile(neighbors[0], () => 
-            {
-                curPlayerTileID = neighbors[0];
-                this.wait = false;
-            });
-        }
-        /*
-        else if (Input.GetKey(KeyCode.W))
-        {
-
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-
-        }
-        else if(Input.GetKey(KeyCode.S))
-        {
-
-        }
-        */
 
     }
 
@@ -186,10 +191,10 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    if (i < numRows - 1)
+                    if (i > 0)
                     {
-                        adjList[j + i % numCols].Add(j + (i + 1) % numCols);
-                        adjList[j + (i + 1) % numCols].Add(j + i % numCols);
+                        adjList[j + i * numCols].Add(j + (i - 1) * numCols);
+                        adjList[j + (i -1) * numCols].Add(j + i * numCols);
                     }
                 }
 
@@ -202,7 +207,12 @@ public class Board : MonoBehaviour
                 {
                     walls.Add(new Edge(new Vector2((j + 1) * tileWidth, i * tileHeight), new Vector2((j + 1) * tileWidth, (i + 1) * tileHeight)));
                 }
-                this.tiles[j + i * numCols] = new Tile(j + i * numCols, tileCenter, walls);
+                GameObject tileGO = new GameObject();
+                Tile tile = tileGO.AddComponent<Tile>();
+                tile.id = j + i * numCols;
+                tile.center = tileCenter;
+                tile.walls = walls;
+                this.tiles[j + i * numCols] = tile;
             }
         }
 
@@ -296,18 +306,19 @@ public class Board : MonoBehaviour
         for(int i = 0; i < tiles.Length; i++)
         {
             Tile tile = this.tiles[i];
-            //Create gameobjects here
-            tileGOs[i] = new GameObject();
-            tileGOs[i].transform.parent = transform;
-            tileGOs[i].layer = gameObject.layer;
-            tileGOs[i].transform.position = tile.center;
+            //Modify Tile gameObject
+            tile.gameObject.transform.parent = transform;
+            tile.gameObject.layer = gameObject.layer;
+            tile.gameObject.transform.position = tile.center;
             // Set up game object with mesh;
-            tileGOs[i].AddComponent<MeshRenderer>();
-            tileGOs[i].GetComponent<MeshRenderer>().material.color = Color.white;
-            MeshFilter tileMeshFilter = tileGOs[i].AddComponent<MeshFilter>();
+            tile.gameObject.AddComponent<MeshRenderer>();
+            tile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            MeshFilter tileMeshFilter = tile.gameObject.AddComponent<MeshFilter>();
             tileMeshFilter.mesh = CreateTileMesh();
+            tile.gameObject.AddComponent<BoxCollider2D>();
+            tile.gameObject.layer = 2;
 
-            for(int j = 0; j < tile.walls.Count; j++)
+            for (int j = 0; j < tile.walls.Count; j++)
             {
                 GameObject wallGO = new GameObject();
                 Vector2 wallCenter2D = (tile.walls[j].p2 + tile.walls[j].p1) / 2;
@@ -329,54 +340,41 @@ public class Board : MonoBehaviour
         }
     }
 
-    void MovePlayerToTile(int targetTileID, System.Action callback)
+    public void PanCameraToPlayerTile(int playerTileIdx, System.Action callback)
     {
-        StartCoroutine(MoveToTile(player.transform, this.tiles[targetTileID].center, callback));
+        Tile tile = this.tiles[playerTileIdx];
+        StartCoroutine(PanCameraToPosition(new Vector3(tile.center.x, tile.center.y, cam.transform.position.z), callback));
     }
 
-    IEnumerator MoveToTile(Transform playerTrans, Vector2 targetPos, System.Action callback)
+    IEnumerator PanCameraToPosition(Vector3 targetPos, System.Action callback)
     {
-        Vector2 origPos = playerTrans.position;
+        Vector3 origPos = cam.transform.position;
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
-            
-            playerTrans.position = Vector2.Lerp(origPos, targetPos, t);
+            cam.transform.position = Vector3.Lerp(origPos, targetPos, t);
             t += Time.deltaTime;
             yield return null;
         }
-        playerTrans.position = targetPos;
+        cam.transform.position = targetPos;
         callback();
     }
 
-    /*
-    void RotatePlayerToDir(Vector2 dir)
+    public Tile GetTileFromID(int currentTileID)
     {
-        StartCoroutine(FaceDir());
+        return tiles[currentTileID];
     }
 
-    IEnumerator FaceDir()
-    {
-        float totalT = 1.0f;
-        float t = 0.0f;
-        while (t < totalT)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir, Vector3.back);
-            player.transform.rotation = Quaternion.Slerp(origRotation, targetRotation, Time.deltaTime);
-
-            t += Time.deltaTime;
-            yield return null;
-        }
-        player.transform.rotation = targetRotation;
-    }
-    */
-    
-
-    List<int> GetAdjacentTileIDs(int currentTileID)
+    public List<Tile> GetAdjacentTilesFromID(int currentTileID)
     {
         List<int> neighborIDs = adjList[currentTileID];
-        return neighborIDs;
+        List<Tile> neighborTiles = new List<Tile>();
+        for(int i = 0; i < neighborIDs.Count; i++)
+        {
+            neighborTiles.Add(tiles[neighborIDs[i]]);
+        }
+        return neighborTiles;
     }
 
     /*
@@ -427,7 +425,7 @@ public class Board : MonoBehaviour
         return walls.OrderBy(angleRange => ((angleRange.edge.p1 + angleRange.edge.p2)/2 - currentPos).magnitude).ToList();
     }
 
-    void ConstructPlayerView(Vector2 currentPos, Vector2 leftFunnel, Vector3 rightFunnel)
+    public List<Vector2> ConstructPlayerViewHull(Vector2 currentPos, Vector2 leftFunnel, Vector3 rightFunnel)
     {
         List<AngleRange> wallAngleRanges = SortedWallAngleRanges(currentPos, leftFunnel, rightFunnel);
         List<AngleRange> mergedWallAngleRanges = new List<AngleRange>();
@@ -471,6 +469,8 @@ public class Board : MonoBehaviour
             mergedWallAngleRanges.Add(curAngleRange);
         }
 
+        List<Vector2> hull = new List<Vector2>();
+        hull.Add(currentPos);
         mergedWallAngleRanges = mergedWallAngleRanges.OrderBy(angleRange => angleRange.t1).ToList();
         Vector2 last = currentPos;
         for (int i = 0; i < mergedWallAngleRanges.Count; i++)
@@ -481,36 +481,18 @@ public class Board : MonoBehaviour
 
             Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;
             Vector2 s1 = angleRange.edge.Intersect(currentPos, dir1);
+            hull.Add(s1);
             Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(s1.x, s1.y, -0.5f), Color.magenta);
 
             Vector2 dir2 = (Quaternion.AngleAxis(angleRange.t2, new Vector3(0, 0, 1)) * rightFunnel).normalized;
             Vector2 s2 = angleRange.edge.Intersect(currentPos, dir2);
+            hull.Add(s2);
             Debug.DrawLine(new Vector3(s1.x, s1.y, -0.5f), new Vector3(s2.x, s2.y, -0.5f), Color.magenta);
             last = s2;
         }
         Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(currentPos.x, currentPos.y, -0.5f), Color.magenta);
-
-
-        /*
-        List<Vector2> hull = new List<Vector2>();
-        hull.Add(Vector2.zero);
-
-        for (int i = 0; i < mergedWallAngleRanges.Count; i++)
-        {
-            AngleRange angleRange = mergedWallAngleRanges[i];
-            Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;
-            //hull.Add(angleRange.edge.Intersect(currentPos, dir1) - currentPos);
-            hull.Add(playerView.transform.InverseTransformPoint(angleRange.edge.Intersect(currentPos, dir1)));
-
-            Vector2 dir2 = (Quaternion.AngleAxis(angleRange.t2, new Vector3(0, 0, 1)) * rightFunnel).normalized;
-            //hull.Add(angleRange.edge.Intersect(currentPos, dir2) - currentPos);
-            hull.Add(playerView.transform.InverseTransformPoint(angleRange.edge.Intersect(currentPos, dir2)));
-        }
-
-        //Set view mesh
-        playerView.GetComponent<MeshFilter>().mesh = CreateViewMesh(hull.ToArray());
-        */
-
+        return hull;
     }
+
 }
 
