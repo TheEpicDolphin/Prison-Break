@@ -34,6 +34,16 @@ public class PanelFunctions : MonoBehaviour
 
     void Update() {}
 
+    public void Watch()
+    {
+        foreach (Tile neighborTile in Game.Instance.tileButtons)
+        {
+            neighborTile.gameObject.layer = 2;
+            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+        }
+        StartCoroutine(Game.Instance.currentPlayer.Watch());
+    }
+
     public void transitionReadyButton()
     {
         TransitionPanel.SetActive(false);

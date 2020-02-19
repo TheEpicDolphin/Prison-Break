@@ -49,93 +49,8 @@ public class Gunner : Player
 
         //StartCoroutine(PresentMovementOptions());
         PresentMovementOptions();
-
-        /*
-        int numMoves = 0;
-        while(numMoves < 2)
-        {
-            waitFlags = 0b0000;
-            //Provide player with movement options
-            GunnerAction gunnerAction;
-            PresentMovementOptions(numMoves, currentTileIdx, () =>
-            {
-                waitFlags |= 0b0001;
-            });
-
-            
-            yield return new WaitUntil(() => waitFlags == 0b0011);
-
-            
-            //Perform action animation
-            waitFlags = 0b0000;
-            if(gunnerAction == GunnerAction.Move)
-            {
-                //Play moving animation
-                MovePlayerToTile(this.currentTileIdx, () =>
-                {
-                    waitFlags |= 0b0001;
-                });
-                yield return new WaitUntil(() => waitFlags == 0b0001);
-            }
-            else if(gunnerAction == GunnerAction.Watch)
-            {
-
-                ShowExtendedCone(() =>
-                {
-                    waitFlags |= 0b0001;
-                });
-                yield return new WaitUntil(() => waitFlags == 0b0001);
-
-                List<Knifer> knifersKilled = ScanForKnifers();
-                foreach (Knifer knifer in knifersKilled)
-                {
-                    //Play killing animation for each
-                    waitFlags = 0b0000;
-                    ShootKnifer(() =>
-                    {
-                        waitFlags |= 0b0001;
-                    });
-                    yield return new WaitUntil(() => waitFlags == 0b0001);
-                }
-
-                waitFlags = 0b0000;
-                HideExtendedCone(() =>
-                {
-                    waitFlags |= 0b0001;
-                });
-                yield return new WaitUntil(() => waitFlags == 0b0001);
-
-
-                if (game.knifersLeft == 0)
-                {
-                    //Game over. Gunner won!
-                    yield break;
-                }
-                break;
-            }
-            else if(gunnerAction == GunnerAction.Stay)
-            {
-                break;
-            }
-            
-
-            numMoves += 1;
-        }
-        */
     }
 
-
-    List<Vector2> GetExtendedCone()
-    {
-        //Construct player view mesh depending on choice
-        Vector2 playerPos2D = new Vector2(transform.position.x, transform.position.y);
-        Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
-        Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
-        Debug.DrawRay(transform.position, 15.0f * leftFunnel, Color.green);
-        Debug.DrawRay(transform.position, 15.0f * rightFunnel, Color.red);
-        Debug.DrawRay(transform.position, 15.0f * Vector2.right, Color.yellow);
-        return board.ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
-    }
 
     
     IEnumerator PulseImmediateCone(System.Action callback)
@@ -150,30 +65,6 @@ public class Gunner : Player
         callback();
     }
 
-    /*
-    IEnumerator ShowExtendedCone(System.Action callback)
-    {
-
-    }
-
-    IEnumerator HideExtendedCone(System.Action callback)
-    {
-
-    }
-    
-
-    List<Knifer> ScanForKnifers()
-    {
-        return new List<Knifer>();
-    }
-
-    void ShootKnifer(System.Action callback)
-    {
-
-    }
-
-    */
-
     public override void PresentMovementOptions()
     {
         Tile curTile = board.GetTileFromID(this.currentTileIdx);
@@ -184,6 +75,7 @@ public class Gunner : Player
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         }
     }
+
 
     /*
     public override IEnumerator PresentMovementOptions()
@@ -227,47 +119,59 @@ public class Gunner : Player
     }
     */
     
-    public IEnumerator Watch()
+    public override IEnumerator Watch()
     {
 
         ShowExtendedCone();
         yield return new WaitForSeconds(3);
-
         /*
-        List<Knifer> knifersKilled = ScanForKnifers();
-        foreach (Knifer knifer in knifersKilled)
+        foreach(Player player in Game.Instance.players)
         {
-            //Play killing animation for each
-            waitFlags = 0b0000;
-            ShootKnifer(() =>
+            //This creates ray through mouse position
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position,);
+            if (hit)
             {
-                waitFlags |= 0b0001;
-            });
-            yield return new WaitUntil(() => waitFlags == 0b0001);
+                if (hit.collider.gameObject.GetComponent<Knifer>())
+                {
+                    Knifer knifer = hit.collider.gameObject.GetComponent<Knifer>();
+                    knifer.Die();
+                }
+            }
         }
-
-        waitFlags = 0b0000;
         */
-
         HideExtendedCone();
 
         //StartCoroutine(endTurn);
     }
 
+    List<Vector2> GetExtendedCone()
+    {
+        //Construct player view mesh depending on choice
+        Vector2 playerPos2D = new Vector2(transform.position.x, transform.position.y);
+        Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
+        Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
+        Debug.DrawRay(transform.position, 15.0f * leftFunnel, Color.green);
+        Debug.DrawRay(transform.position, 15.0f * rightFunnel, Color.red);
+        Debug.DrawRay(transform.position, 15.0f * Vector2.right, Color.yellow);
+        return board.ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
+    }
+
     void ShowExtendedCone()
     {
         List<Vector2> extendedConeHull = GetExtendedCone();
+        extendedConeHull.Add(extendedConeHull[0]);
         Vector3[] vertices = new Vector3[extendedConeHull.Count];
         for(int i = 0; i < extendedConeHull.Count; i++)
         {
             Vector2 vert2d = extendedConeHull[i];
-            vertices[i] = new Vector3(vert2d.x, vert2d.y, -0.1f);
+            vertices[i] = new Vector3(vert2d.x, vert2d.y, -0.2f);
         }
 
         GameObject playerViewGO = new GameObject();
         this.playerView = playerViewGO.AddComponent<LineRenderer>();
         this.playerView.material = new Material(Shader.Find("Sprites/Default"));
-        this.playerView.widthMultiplier = 0.2f;
+        this.playerView.widthMultiplier = 0.1f;
         this.playerView.positionCount = extendedConeHull.Count;
         this.playerView.SetPositions(vertices);
 

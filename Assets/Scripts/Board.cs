@@ -71,8 +71,10 @@ public class Tile : MonoBehaviour
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
         StartCoroutine(Game.Instance.currentPlayer.MoveToTile(this));
+        //StartCoroutine(Game.Instance.currentPlayer.Watch());
     }
 }
+
 
 /*
 public class Watch : MonoBehaviour
@@ -301,9 +303,10 @@ public class Board : MonoBehaviour
             {
                 GameObject wallGO = new GameObject();
                 Vector2 wallCenter2D = (tile.walls[j].p2 + tile.walls[j].p1) / 2;
-                //wallGO.transform.parent = transform;
-                //wallGo.layer = gameObject.layer;
-                wallGO.transform.position = new Vector3(wallCenter2D.x, wallCenter2D.y, -0.5f);
+                wallGO.transform.parent = transform;
+                wallGO.layer = 3;
+                
+                wallGO.transform.position = new Vector3(wallCenter2D.x, wallCenter2D.y, -0.1f);
                 Vector2 edgeDir = (tile.walls[j].p2 - tile.walls[j].p1).normalized;
                 //transform.forward points in -z direction (into screen)
                 //transform.up points in +y direction
@@ -313,6 +316,7 @@ public class Board : MonoBehaviour
                 wallGO.GetComponent<MeshRenderer>().material.color = Color.black;
                 MeshFilter wallMeshFilter = wallGO.AddComponent<MeshFilter>();
                 wallMeshFilter.mesh = CreateWallMesh(edgeDir);
+                wallGO.AddComponent<BoxCollider2D>();
                 wallsGOs.Add(wallGO);
             }
             
