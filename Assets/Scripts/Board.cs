@@ -70,7 +70,7 @@ public class Tile : MonoBehaviour
             neighborTile.gameObject.layer = 2;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
-        StartCoroutine(Game.Instance.currentPlayer.MoveToTile(this));
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.MoveToTile);
     }
 }
 
@@ -411,8 +411,8 @@ public class Board : MonoBehaviour
     {
         List<AngleRange> wallAngleRanges = SortedWallAngleRanges(currentPos, leftFunnel, rightFunnel);
         List<AngleRange> mergedWallAngleRanges = new List<AngleRange>();
-        Debug.Log("------------------");
-        Debug.Log(wallAngleRanges.Count);
+        //Debug.Log("------------------");
+        //Debug.Log(wallAngleRanges.Count);
 
         /*
         for (int i = 0; i < wallAngleRanges.Count; i++)
@@ -458,7 +458,7 @@ public class Board : MonoBehaviour
         for (int i = 0; i < mergedWallAngleRanges.Count; i++)
         {
             AngleRange angleRange = mergedWallAngleRanges[i];
-            Debug.Log(angleRange.t1.ToString() + ", " + angleRange.t2.ToString());
+            //Debug.Log(angleRange.t1.ToString() + ", " + angleRange.t2.ToString());
             //Debug.DrawLine(new Vector3(angleRange.edge.p1.x, angleRange.edge.p1.y, -1.0f), new Vector3(angleRange.edge.p2.x, angleRange.edge.p2.y, -1.0f), Color.cyan);
 
             Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;

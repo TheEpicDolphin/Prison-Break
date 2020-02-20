@@ -106,6 +106,10 @@ public class Game : MonoBehaviour
     public GameObject stayButton;
     public List<Tile> tileButtons;
 
+    Coroutine gameLoop;
+
+    uint waitFlags;
+
     /*
     // Start is called before the first frame update
     void Start()
@@ -178,6 +182,8 @@ public class Game : MonoBehaviour
     private void Start()
     {
         watchButton.GetComponent<Button>().interactable = false;
+
+
     }
 
     // Update is called once per frame
@@ -185,24 +191,38 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) && !gameStarted)
         {
-            StartCoroutine(TurnLoop());
+            foreach (Player player in players)
+            {
+                player.Setup();
+            }
+            //Start game loop
+            gameLoop = StartCoroutine(GameLoop());
             gameStarted = true;
         }
     }
 
-    IEnumerator TurnLoop()
+    IEnumerator GameLoop()
     {
         int i = 0;
-        uint waitFlags;
         while (true)
         {
             waitFlags = 0b0000;
             currentPlayer = this.players[i];
-            StartCoroutine(currentPlayer.StartTurn());
+            currentPlayer.ExecuteState();
             yield return new WaitUntil(() => waitFlags == 0b0001);
-            
             i = (i + 1) % players.Length;
         }
+    }
+
+    public void NextTurn()
+    {
+        this.waitFlags = 0b0001;
+    }
+
+    public void EndGame()
+    {
+        StopCoroutine(gameLoop);
+        //Game ended
     }
 
     /*

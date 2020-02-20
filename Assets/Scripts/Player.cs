@@ -2,22 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerState
+{
+    Idle,
+    FirstMove,
+    SecondMove,
+    ThirdMove,
+    EndingTurn,
+    Dead
+}
+
+public enum PlayerAction
+{
+    Watch,
+    MoveToTile,
+    Skip
+}
 
 
 public class Player : MonoBehaviour
 {
     public string playerName;
     public Board board;
-    public Game game;
-    public Camera cam;
     public int currentTileIdx;
-    int numMoves;
+    public int movesLeft;
     public LineRenderer playerView;
-    
+    public PlayerState curState;
+
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = Vector2.zero;
+        curState = PlayerState.Idle;
     }
 
     // Update is called once per frame
@@ -26,9 +41,25 @@ public class Player : MonoBehaviour
         
     }
 
-    public virtual IEnumerator StartTurn()
+    public virtual void ProcessAction(PlayerAction action)
     {
-        yield return null;
+
+    }
+
+    public virtual void ExecuteState()
+    {
+
+    }
+
+    /*
+     *  Setup starting position and rotation for each player 
+     * 
+     */
+    public void Setup()
+    {
+        Tile startingTile = board.GetTileFromID(currentTileIdx);
+        transform.position = startingTile.center;
+        transform.up = Vector2.up;
     }
 
     /*
@@ -57,40 +88,22 @@ public class Player : MonoBehaviour
     public IEnumerator MoveToTile(Tile tile)
     {
         Vector2 origPos = transform.position;
-        Vector3 origCamPos = cam.transform.position;
+        Vector3 origCamPos = Camera.main.transform.position;
         Vector2 targetPos = tile.center;
-        Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, cam.transform.position.z);
+        Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, Camera.main.transform.position.z);
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
 
             transform.position = Vector2.Lerp(origPos, targetPos, t);
-            cam.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t);
+            Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t);
             t += Time.deltaTime;
             yield return null;
         }
         transform.position = targetPos;
-        cam.transform.position = targetCamPos;
-
-        PresentMovementOptions();
+        Camera.main.transform.position = targetCamPos;
+        this.ExecuteState();
     }
 
-    public virtual IEnumerator Watch()
-    {
-        yield return null;
-    }
-
-    public virtual void PresentMovementOptions()
-    {
-
-    }
-
-    /*
-    public virtual IEnumerator PresentMovementOptions()
-    {
-        
-        yield return null;
-    }
-    */
 }

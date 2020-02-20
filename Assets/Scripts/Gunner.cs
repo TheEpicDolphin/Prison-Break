@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Gunner : Player
 {
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +18,61 @@ public class Gunner : Player
         
     }
 
-    public override IEnumerator StartTurn()
+    public override void ProcessAction(PlayerAction action)
+    {
+        switch (action)
+        {
+            case PlayerAction.MoveToTile: // Player clicked Move button
+                
+                if(curState == PlayerState.FirstMove)
+                {
+                    curState = PlayerState.SecondMove;
+                }
+                else if(curState == PlayerState.SecondMove)
+                {
+                    curState = PlayerState.EndingTurn;
+                }
+
+                Tile clickedTile = board.GetTileFromID(currentTileIdx);
+                StartCoroutine(MoveToTile(clickedTile));
+                
+                break;
+            case PlayerAction.Watch: // Player clicked 
+                curState = PlayerState.EndingTurn;
+                StartCoroutine(Watch());
+                break;
+            case PlayerAction.Skip:
+                Debug.Log("none of the above");
+                break;
+        }
+    }
+
+    public override void ExecuteState()
+    {
+        switch (curState)
+        {
+            case PlayerState.Idle:
+                curState = PlayerState.FirstMove;
+                StartCoroutine(StartTurn());
+                break;
+            case PlayerState.FirstMove:
+                Debug.Log("first move");
+                PresentMovementOptions();
+                break;
+            case PlayerState.SecondMove:
+                Debug.Log("second move");
+                PresentMovementOptions();
+                break;
+            case PlayerState.EndingTurn:
+                Debug.Log("Ending turn...");
+                curState = PlayerState.Idle;
+                Game.Instance.NextTurn();
+                //StartCoroutine(EndTurn(clickedTile));
+                break;
+        }
+    }
+
+    IEnumerator StartTurn()
     {
         uint waitFlags = 0b0000;
         //Show player start transition
@@ -27,6 +82,9 @@ public class Gunner : Player
             waitFlags |= 0b0001;
         });
         */
+
+        //TODO: Hide Knifers
+
 
         //Move camera to player
         waitFlags = 0b0001;
@@ -45,8 +103,7 @@ public class Gunner : Player
         }));
         yield return new WaitUntil(() => waitFlags == 0b0001);
 
-        //StartCoroutine(PresentMovementOptions());
-        PresentMovementOptions();
+        ExecuteState();
     }
 
 
@@ -63,7 +120,7 @@ public class Gunner : Player
         callback();
     }
 
-    public override void PresentMovementOptions()
+    void PresentMovementOptions()
     {
         Tile curTile = board.GetTileFromID(this.currentTileIdx);
         Game.Instance.tileButtons = board.GetAdjacentTilesFromID(this.currentTileIdx);
@@ -74,51 +131,8 @@ public class Gunner : Player
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = true;
     }
-
-
-    /*
-    public override IEnumerator PresentMovementOptions()
-    {
-
-        Tile curTile = board.GetTileFromID(this.currentTileIdx);
-        Game.Instance.tileButtons = board.GetAdjacentTilesFromID(this.currentTileIdx);
-        foreach (Tile neighborTile in Game.Instance.tileButtons)
-        {
-            neighborTile.gameObject.layer = 0;
-            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
-        }
-
-        while (true)
-        {
-            //This creates ray through mouse position
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            if (hit)
-            {
-                //Highlight tile
-                Button button = hit.collider.gameObject.GetComponent<Button>();
-
-                if (Input.GetMouseButton(0))
-                {
-                    //Reset tiles
-                    foreach (Tile neighborTile in adjacentTiles)
-                    {
-                        neighborTile.gameObject.layer = 2;
-                        neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
-                    }
-                    button.Click(this);
-                    yield break;
-                }
-
-            }
-            yield return null;
-
-        }
-        
-    }
-    */
     
-    public override IEnumerator Watch()
+    IEnumerator Watch()
     {
 
         ShowExtendedCone();
@@ -141,7 +155,7 @@ public class Gunner : Player
         */
         HideExtendedCone();
 
-        //StartCoroutine(endTurn);
+        this.ExecuteState();
     }
 
     List<Vector2> GetExtendedCone()
@@ -239,6 +253,48 @@ public class Gunner : Player
         //});
         //yield return new WaitUntil(() => waitFlags == 0b0001);
         
+    }
+    */
+
+    /*
+    public override IEnumerator PresentMovementOptions()
+    {
+
+        Tile curTile = board.GetTileFromID(this.currentTileIdx);
+        Game.Instance.tileButtons = board.GetAdjacentTilesFromID(this.currentTileIdx);
+        foreach (Tile neighborTile in Game.Instance.tileButtons)
+        {
+            neighborTile.gameObject.layer = 0;
+            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+        }
+
+        while (true)
+        {
+            //This creates ray through mouse position
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+            if (hit)
+            {
+                //Highlight tile
+                Button button = hit.collider.gameObject.GetComponent<Button>();
+
+                if (Input.GetMouseButton(0))
+                {
+                    //Reset tiles
+                    foreach (Tile neighborTile in adjacentTiles)
+                    {
+                        neighborTile.gameObject.layer = 2;
+                        neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+                    }
+                    button.Click(this);
+                    yield break;
+                }
+
+            }
+            yield return null;
+
+        }
+
     }
     */
 
