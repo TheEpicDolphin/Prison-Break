@@ -83,6 +83,7 @@ public class Game : MonoBehaviour
             {
                 waitFlags = 0b0000;
                 currentPlayer = gunner;
+                Debug.Log(currentPlayer.gameObject.name + " starting turn...");
                 currentPlayer.ExecuteState();
                 yield return new WaitUntil(() => waitFlags == 0b0001);
             }
@@ -91,6 +92,7 @@ public class Game : MonoBehaviour
             {
                 waitFlags = 0b0000;
                 currentPlayer = knifer;
+                Debug.Log(currentPlayer.gameObject.name + " starting turn...");
                 currentPlayer.ExecuteState();
                 yield return new WaitUntil(() => waitFlags == 0b0001);
             }

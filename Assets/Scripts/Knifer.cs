@@ -78,23 +78,18 @@ public class Knifer : Player
                 StartCoroutine(StartTurn());
                 break;
             case PlayerState.FirstMove:
-                Debug.Log("first move");
                 PresentMovementOptions();
                 break;
             case PlayerState.SecondMove:
-                Debug.Log("second move");
                 PresentMovementOptions();
                 break;
             case PlayerState.ThirdMove:
-                Debug.Log("third move");
                 PresentMovementOptions();
                 break;
             case PlayerState.Rotating:
-                Debug.Log("rotating");
                 PresentRotatingOptions();
                 break;
             case PlayerState.EndingTurn:
-                Debug.Log("Ending turn...");
                 curState = PlayerState.Idle;
                 Game.Instance.NextTurn();
                 //StartCoroutine(EndTurn(clickedTile));
