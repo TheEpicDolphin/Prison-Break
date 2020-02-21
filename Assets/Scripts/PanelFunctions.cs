@@ -55,7 +55,7 @@ public class PanelFunctions : MonoBehaviour
     public void FaceUp()
     {
         DisableRotationOptionButtons();
-        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.up } });
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.down } });
     }
 
     public void FaceLeft()
@@ -67,7 +67,7 @@ public class PanelFunctions : MonoBehaviour
     public void FaceDown()
     {
         DisableRotationOptionButtons();
-        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.down } });
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.up } });
     }
 
     void DisableMovementOptionButtons()

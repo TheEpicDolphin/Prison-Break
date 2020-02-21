@@ -34,15 +34,16 @@ public class Knifer : Player
                 }
                 else if (curState == PlayerState.ThirdMove)
                 {
-                    curState = PlayerState.Rotating;
+                    curState = PlayerState.EndingTurn;
                 }
 
                 Tile clickedTile = board.GetTileFromID(currentTileIdx);
                 
-                foreach (Player other in Game.Instance.players) 
+                foreach (Gunner gunner in Game.Instance.gunners) 
                 {
-                    if (clickedTile.id == other.currentTileIdx) 
+                    if (clickedTile.id == gunner.currentTileIdx) 
                     {
+                        curState = PlayerState.Idle;
                         Game.Instance.EndGame(this);
                     }
 				}
@@ -97,6 +98,9 @@ public class Knifer : Player
                 curState = PlayerState.Idle;
                 Game.Instance.NextTurn();
                 //StartCoroutine(EndTurn(clickedTile));
+                break;
+            case PlayerState.Dead:
+                Game.Instance.NextTurn();
                 break;
         }
     }

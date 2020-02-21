@@ -9,7 +9,7 @@ public class Gunner : Player
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameObject.layer = 2;
     }
 
     // Update is called once per frame
@@ -38,11 +38,11 @@ public class Gunner : Player
                 
                 break;
             case PlayerAction.Watch: // Player clicked 
-                curState = PlayerState.EndingTurn;
+                curState = PlayerState.Rotating;
                 StartCoroutine(Watch());
                 break;
             case PlayerAction.Skip:
-                curState = PlayerState.EndingTurn;
+                curState = PlayerState.Rotating;
                 ExecuteState();
                 break;
             case PlayerAction.Rotate:
@@ -160,29 +160,37 @@ public class Gunner : Player
         yield return new WaitForSeconds(2);
 
         //Reveal knifers. These knifers will die
-        foreach(Player player in Game.Instance.players)
+        foreach(Knifer knifer in Game.Instance.knifers)
         {
             Vector2 origin = new Vector2(transform.position.x, transform.position.y);
-            Vector2 dir = new Vector2(player.transform.position.x, player.transform.position.y) - origin;
-            RaycastHit2D hit = Physics2D.Raycast(origin, dir);
-            Debug.DrawRay(origin, dir, Color.red, 2.0f);
-            if (hit)
+            Vector2 dir = new Vector2(knifer.transform.position.x, knifer.transform.position.y) - origin;
+            Vector3 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
+            Vector3 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
+
+            float theta1 = Vector3.SignedAngle(new Vector3(dir.x, dir.y, 0), rightFunnel, Vector3.back);
+            float theta2 = Vector3.SignedAngle(leftFunnel, new Vector3(dir.x, dir.y, 0), Vector3.back);
+            Debug.Log(theta1.ToString() + ", " + theta2.ToString());
+            if (theta1 >= 0.0f && theta2 >= 0.0f)
             {
-                if (hit.collider.gameObject.GetComponent<Knifer>())
+                RaycastHit2D hit = Physics2D.Raycast(origin, dir);
+                Debug.DrawRay(origin, dir, Color.red, 2.0f);
+                if (hit)
                 {
-                    Knifer knifer = hit.collider.gameObject.GetComponent<Knifer>();
+                    Debug.Log(hit.collider.gameObject.name);
+                    Debug.Log(knifer.gameObject.name);
+
                     //Dont show knifer if it is already dead
-                    if(knifer.curState != PlayerState.Dead)
+                    if (knifer.curState != PlayerState.Dead && hit.collider.gameObject.GetInstanceID() == knifer.gameObject.GetInstanceID())
                     {
-                        gameObject.GetComponent<Renderer>().enabled = true;
+                        knifer.GetComponent<Renderer>().enabled = true;
                         knifer.ProcessAction(PlayerAction.Die);
                     }
-                    
                 }
             }
+            
         }
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
 
         HideExtendedCone();
 
@@ -228,9 +236,21 @@ public class Gunner : Player
 
     void HideKnifers()
     {
-        foreach(Player player in players)
+        foreach(Knifer knifer in Game.Instance.knifers)
         {
+            knifer.GetComponent<Renderer>().enabled = false;
+        }
+    }
 
+    void ShowKnifers()
+    {
+        foreach (Knifer knifer in Game.Instance.knifers)
+        {
+            if(knifer.curState != PlayerState.Dead)
+            {
+                knifer.GetComponent<Renderer>().enabled = true;
+            }
+            
         }
     }
 }

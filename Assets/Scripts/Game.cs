@@ -23,9 +23,7 @@ public class Game : MonoBehaviour
         }
     }
 
-
-    public int knifersLeft = 2;
-    public Player[] players;
+    //public Player[] players;
     public Gunner[] gunners;
     public Knifer[] knifers;
     bool gameStarted = false;
@@ -61,9 +59,14 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) && !gameStarted)
         {
-            foreach (Player player in players)
+            foreach(Gunner gunner in gunners)
             {
-                player.Setup();
+                gunner.Setup();
+            }
+
+            foreach (Knifer knifer in knifers)
+            {
+                knifer.Setup();
             }
             //Start game loop
             gameLoop = StartCoroutine(GameLoop());
@@ -73,14 +76,24 @@ public class Game : MonoBehaviour
 
     IEnumerator GameLoop()
     {
-        int i = 0;
         while (true)
         {
-            waitFlags = 0b0000;
-            currentPlayer = this.players[i];
-            currentPlayer.ExecuteState();
-            yield return new WaitUntil(() => waitFlags == 0b0001);
-            i = (i + 1) % players.Length;
+            
+            foreach (Gunner gunner in gunners)
+            {
+                waitFlags = 0b0000;
+                currentPlayer = gunner;
+                currentPlayer.ExecuteState();
+                yield return new WaitUntil(() => waitFlags == 0b0001);
+            }
+
+            foreach (Knifer knifer in knifers)
+            {
+                waitFlags = 0b0000;
+                currentPlayer = knifer;
+                currentPlayer.ExecuteState();
+                yield return new WaitUntil(() => waitFlags == 0b0001);
+            }
         }
     }
 
