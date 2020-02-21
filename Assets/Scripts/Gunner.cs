@@ -18,7 +18,7 @@ public class Gunner : Player
         
     }
 
-    public override void ProcessAction(PlayerAction action)
+    public override void ProcessAction(PlayerAction action, Dictionary<string, object> data = null)
     {
         switch (action)
         {
@@ -30,7 +30,7 @@ public class Gunner : Player
                 }
                 else if(curState == PlayerState.SecondMove)
                 {
-                    curState = PlayerState.EndingTurn;
+                    curState = PlayerState.Rotating;
                 }
 
                 Tile clickedTile = board.GetTileFromID(currentTileIdx);
@@ -42,7 +42,13 @@ public class Gunner : Player
                 StartCoroutine(Watch());
                 break;
             case PlayerAction.Skip:
+                curState = PlayerState.EndingTurn;
                 Debug.Log("none of the above");
+                break;
+            case PlayerAction.Rotate:
+                Vector2 dir = (Vector2) data["dir"];
+                curState = PlayerState.EndingTurn;
+                StartCoroutine(FaceDir(dir));
                 break;
         }
     }
@@ -135,7 +141,15 @@ public class Gunner : Player
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = true;
     }
-    
+
+    void PresentRotatingOptions()
+    {
+        Game.Instance.rightButton.GetComponent<Button>().interactable = true;
+        Game.Instance.upButton.GetComponent<Button>().interactable = true;
+        Game.Instance.leftButton.GetComponent<Button>().interactable = true;
+        Game.Instance.downButton.GetComponent<Button>().interactable = true;
+    }
+
     IEnumerator Watch()
     {
 

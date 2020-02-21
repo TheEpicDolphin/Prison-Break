@@ -36,14 +36,60 @@ public class PanelFunctions : MonoBehaviour
 
     public void Watch()
     {
+        DisableMovementOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Watch);
+    }
+
+    public void Skip()
+    {
+        DisableMovementOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Skip);
+    }
+
+    public void FaceRight()
+    {
+        DisableRotationOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { {"dir" , Vector2.right}});
+    }
+
+    public void FaceUp()
+    {
+        DisableRotationOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.up } });
+    }
+
+    public void FaceLeft()
+    {
+        DisableRotationOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.left } });
+    }
+
+    public void FaceDown()
+    {
+        DisableRotationOptionButtons();
+        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Rotate, new Dictionary<string, object> { { "dir", Vector2.down } });
+    }
+
+    void DisableMovementOptionButtons()
+    {
         foreach (Tile neighborTile in Game.Instance.tileButtons)
         {
             neighborTile.gameObject.layer = 2;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = false;
-        Game.Instance.currentPlayer.ProcessAction(PlayerAction.Watch);
+        Game.Instance.stayButton.GetComponent<Button>().interactable = false;
     }
+
+    void DisableRotationOptionButtons()
+    {
+        Game.Instance.rightButton.GetComponent<Button>().interactable = false;
+        Game.Instance.upButton.GetComponent<Button>().interactable = false;
+        Game.Instance.leftButton.GetComponent<Button>().interactable = false;
+        Game.Instance.downButton.GetComponent<Button>().interactable = false;
+
+    }
+
 
     public void transitionReadyButton()
     {

@@ -104,6 +104,12 @@ public class Game : MonoBehaviour
 
     public GameObject watchButton;
     public GameObject stayButton;
+
+    public GameObject rightButton;
+    public GameObject upButton;
+    public GameObject leftButton;
+    public GameObject downButton;
+
     public List<Tile> tileButtons;
 
     Coroutine gameLoop;
@@ -182,7 +188,11 @@ public class Game : MonoBehaviour
     private void Start()
     {
         watchButton.GetComponent<Button>().interactable = false;
-
+        stayButton.GetComponent<Button>().interactable = false;
+        rightButton.GetComponent<Button>().interactable = false;
+        upButton.GetComponent<Button>().interactable = false;
+        leftButton.GetComponent<Button>().interactable = false;
+        downButton.GetComponent<Button>().interactable = false;
 
     }
 

@@ -17,7 +17,8 @@ public enum PlayerAction
 {
     Watch,
     MoveToTile,
-    Skip
+    Skip,
+    Rotate
 }
 
 
@@ -42,7 +43,7 @@ public class Player : MonoBehaviour
         
     }
 
-    public virtual void ProcessAction(PlayerAction action)
+    public virtual void ProcessAction(PlayerAction action, Dictionary<string, object> data = null)
     {
 
     }
@@ -63,29 +64,24 @@ public class Player : MonoBehaviour
         transform.up = Vector2.up;
     }
 
-    /*
-    public void RotatePlayerToDir(Vector2 dir, System.Action callback)
+    public IEnumerator FaceDir(Vector2 targetDir)
     {
-        StartCoroutine(FaceDir(), callback);
-    }
-    */
+        Quaternion origRotation = transform.rotation;
+        Quaternion targetRot = Quaternion.LookRotation(transform.forward, new Vector3(targetDir.x, targetDir.y, 0.0f));
 
-    IEnumerator FaceDir(targetDir)
-    {
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDir, Vector3.back);
-            transform.rotation = Quaternion.Slerp(origRotation, targetRotation, Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(origRotation, targetRot, Time.deltaTime);
 
             t += Time.deltaTime;
             yield return null;
         }
-        transform.rotation = targetRotation;
-    }
-    
+        transform.rotation = targetRot;
 
+        this.ExecuteState();
+    }
     
     public IEnumerator MoveToTile(Tile tile)
     {
