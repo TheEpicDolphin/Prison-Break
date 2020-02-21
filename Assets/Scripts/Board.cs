@@ -138,7 +138,7 @@ public class Board : MonoBehaviour
     {
         //Construct player view mesh depending on choice
         
-        /*
+        
         Vector2 playerPos2D = new Vector2(tester.transform.position.x, tester.transform.position.y);
         Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * tester.transform.up).normalized;
         Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * tester.transform.up).normalized;
@@ -146,7 +146,7 @@ public class Board : MonoBehaviour
         Debug.DrawRay(tester.transform.position, 15.0f * rightFunnel, Color.red);
         Debug.DrawRay(tester.transform.position, 15.0f * Vector2.right, Color.yellow);
         ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
-        */
+        
     }
 
 
@@ -437,11 +437,11 @@ public class Board : MonoBehaviour
 
             for (int j = 1; j < wallAngleRanges.Count; j++)
             {
-                if (curAngleRange.t1 < wallAngleRanges[j].t1 && curAngleRange.t2 > wallAngleRanges[j].t1 && curAngleRange.t2 < wallAngleRanges[j].t2)
+                if (curAngleRange.t1 <= wallAngleRanges[j].t1 && curAngleRange.t2 > wallAngleRanges[j].t1 && curAngleRange.t2 < wallAngleRanges[j].t2)
                 {
                     tempAngleRanges.Add(new AngleRange(wallAngleRanges[j].edge, curAngleRange.t2, wallAngleRanges[j].t2));
                 }
-                else if (curAngleRange.t1 > wallAngleRanges[j].t1 && curAngleRange.t1 < wallAngleRanges[j].t2 && curAngleRange.t2 > wallAngleRanges[j].t2)
+                else if (curAngleRange.t1 > wallAngleRanges[j].t1 && curAngleRange.t1 < wallAngleRanges[j].t2 && curAngleRange.t2 >= wallAngleRanges[j].t2)
                 {
                     tempAngleRanges.Add(new AngleRange(wallAngleRanges[j].edge, wallAngleRanges[j].t1, curAngleRange.t1));
                 }
@@ -458,6 +458,7 @@ public class Board : MonoBehaviour
             wallAngleRanges = tempAngleRanges;
             mergedWallAngleRanges.Add(curAngleRange);
         }
+
 
         List<Vector2> hull = new List<Vector2>();
         hull.Add(currentPos);
