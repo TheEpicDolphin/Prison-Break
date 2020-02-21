@@ -902,7 +902,7 @@ GameObject:
   - component: {fileID: 363328356}
   - component: {fileID: 363328358}
   m_Layer: 8
-  m_Name: player1
+  m_Name: gunner1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -984,10 +984,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: 
   board: {fileID: 1579082484}
-  game: {fileID: 0}
-  cam: {fileID: 519420031}
   currentTileIdx: 14
+  movesLeft: 0
   playerView: {fileID: 0}
+  curState: 0
 --- !u!1 &443216106
 GameObject:
   m_ObjectHideFlags: 0
@@ -3080,7 +3080,7 @@ GameObject:
   - component: {fileID: 1449765017}
   - component: {fileID: 1449765016}
   m_Layer: 8
-  m_Name: player2
+  m_Name: gunner2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3095,15 +3095,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1449765015}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4e30c407a2c7ef45a323d34e5d897b6, type: 3}
+  m_Script: {fileID: 11500000, guid: 2d86297c6654cab458268b8e0a580f67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  board: {fileID: 0}
-  game: {fileID: 0}
-  cam: {fileID: 0}
+  board: {fileID: 1579082484}
   currentTileIdx: 0
+  movesLeft: 0
   playerView: {fileID: 0}
+  curState: 0
 --- !u!212 &1449765017
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3433,6 +3433,7 @@ MonoBehaviour:
   knifersLeft: 2
   players:
   - {fileID: 363328358}
+  - {fileID: 1449765016}
   currentPlayer: {fileID: 0}
   watchButton: {fileID: 945367481}
   stayButton: {fileID: 0}

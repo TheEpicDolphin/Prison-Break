@@ -136,13 +136,15 @@ public class Gunner : Player
     {
 
         ShowExtendedCone();
-        yield return new WaitForSeconds(3);
-        /*
+        yield return new WaitForSeconds(2);
+
+        //Reveal knifers. These knifers will die
         foreach(Player player in Game.Instance.players)
         {
-            //This creates ray through mouse position
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(transform.position,);
+            Vector2 origin = new Vector2(transform.position.x, transform.position.y);
+            Vector2 dir = new Vector2(player.transform.position.x, player.transform.position.y) - origin;
+            RaycastHit2D hit = Physics2D.Raycast(origin, dir);
+            Debug.DrawRay(origin, dir, Color.red, 2.0f);
             if (hit)
             {
                 if (hit.collider.gameObject.GetComponent<Knifer>())
@@ -152,7 +154,9 @@ public class Gunner : Player
                 }
             }
         }
-        */
+
+        yield return new WaitForSeconds(2);
+
         HideExtendedCone();
 
         this.ExecuteState();

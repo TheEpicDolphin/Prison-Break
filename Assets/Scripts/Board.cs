@@ -110,6 +110,8 @@ public class Board : MonoBehaviour
     float wallWidth = 1.0f;
     float wallLength = 10.0f;
 
+    public Transform tester;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -134,7 +136,17 @@ public class Board : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Construct player view mesh depending on choice
+        
+        /*
+        Vector2 playerPos2D = new Vector2(tester.transform.position.x, tester.transform.position.y);
+        Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * tester.transform.up).normalized;
+        Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * tester.transform.up).normalized;
+        Debug.DrawRay(tester.transform.position, 15.0f * leftFunnel, Color.green);
+        Debug.DrawRay(tester.transform.position, 15.0f * rightFunnel, Color.red);
+        Debug.DrawRay(tester.transform.position, 15.0f * Vector2.right, Color.yellow);
+        ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
+        */
     }
 
 
@@ -376,10 +388,8 @@ public class Board : MonoBehaviour
                 float theta1 = Vector3.SignedAngle(new Vector3(v1.x, v1.y, 0), new Vector3(rightFunnel.x, rightFunnel.y, 0), Vector3.back);
                 float theta2 = Vector3.SignedAngle(new Vector3(v2.x, v2.y, 0), new Vector3(rightFunnel.x, rightFunnel.y, 0), Vector3.back);
                 float totalTheta = Vector3.SignedAngle(new Vector3(leftFunnel.x, leftFunnel.y, 0), new Vector3(rightFunnel.x, rightFunnel.y, 0), Vector3.back);
-                //Debug.Log("----------------");
-                //Debug.Log(theta1);
-                //Debug.Log(theta2);
-                //Debug.Log(totalTheta);
+                Debug.Log("----------------");
+
                 Edge orientedEdge;
                 //Orient edges so that they go counterclockwise around player
                 if (theta1 > theta2)
@@ -411,8 +421,6 @@ public class Board : MonoBehaviour
     {
         List<AngleRange> wallAngleRanges = SortedWallAngleRanges(currentPos, leftFunnel, rightFunnel);
         List<AngleRange> mergedWallAngleRanges = new List<AngleRange>();
-        //Debug.Log("------------------");
-        //Debug.Log(wallAngleRanges.Count);
 
         /*
         for (int i = 0; i < wallAngleRanges.Count; i++)
@@ -458,7 +466,7 @@ public class Board : MonoBehaviour
         for (int i = 0; i < mergedWallAngleRanges.Count; i++)
         {
             AngleRange angleRange = mergedWallAngleRanges[i];
-            //Debug.Log(angleRange.t1.ToString() + ", " + angleRange.t2.ToString());
+            Debug.Log(angleRange.t1.ToString() + ", " + angleRange.t2.ToString());
             //Debug.DrawLine(new Vector3(angleRange.edge.p1.x, angleRange.edge.p1.y, -1.0f), new Vector3(angleRange.edge.p2.x, angleRange.edge.p2.y, -1.0f), Color.cyan);
 
             Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;

@@ -17,6 +17,11 @@ public class Knifer : Player
         
     }
 
+    public override void ExecuteState()
+    {
+        Game.Instance.NextTurn();
+    }
+
     /*
     public override void ExecuteState()
     {
@@ -59,9 +64,14 @@ public class Knifer : Player
         Game.Instance.watchButton.GetComponent<Button>().interactable = true;
     }
 
+
+    */
+
     public void Die()
     {
         curState = PlayerState.Dead;
+        Debug.Log("THIS KNIFER IS DEAD");
+        gameObject.SetActive(false);
+
     }
-    */
 }
