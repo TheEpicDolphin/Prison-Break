@@ -63,6 +63,10 @@ public class Gunner : Player
                 Debug.Log("second move");
                 PresentMovementOptions();
                 break;
+            case PlayerState.Rotating:
+                Debug.Log("rotating");
+                PresentRotatingOptions();
+                break;
             case PlayerState.EndingTurn:
                 Debug.Log("Ending turn...");
                 curState = PlayerState.Idle;

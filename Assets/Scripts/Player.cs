@@ -9,7 +9,8 @@ public enum PlayerState
     SecondMove,
     ThirdMove,
     EndingTurn,
-    Dead
+    Dead,
+    Rotating
 }
 
 public enum PlayerAction
@@ -67,8 +68,9 @@ public class Player : MonoBehaviour
     {
         StartCoroutine(FaceDir(), callback);
     }
+    */
 
-    IEnumerator FaceDir()
+    IEnumerator FaceDir(targetDir)
     {
         float totalT = 1.0f;
         float t = 0.0f;
@@ -82,7 +84,7 @@ public class Player : MonoBehaviour
         }
         transform.rotation = targetRotation;
     }
-    */
+    
 
     
     public IEnumerator MoveToTile(Tile tile)
