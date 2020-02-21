@@ -229,8 +229,9 @@ public class Game : MonoBehaviour
         this.waitFlags = 0b0001;
     }
 
-    public void EndGame()
-    {
+    public void EndGame(Player winner)
+    {  
+        //display current player as winner
         StopCoroutine(gameLoop);
         //Game ended
     }
