@@ -43,7 +43,7 @@ public class Gunner : Player
                 break;
             case PlayerAction.Skip:
                 curState = PlayerState.EndingTurn;
-                Debug.Log("none of the above");
+                ExecuteState();
                 break;
             case PlayerAction.Rotate:
                 Vector2 dir = (Vector2) data["dir"];
@@ -77,6 +77,7 @@ public class Gunner : Player
                 Debug.Log("Ending turn...");
                 curState = PlayerState.Idle;
                 Game.Instance.NextTurn();
+                ShowKnifers();
                 //StartCoroutine(EndTurn(clickedTile));
                 break;
         }
@@ -94,6 +95,7 @@ public class Gunner : Player
         */
 
         //TODO: Hide Knifers
+        HideKnifers();
 
 
         //Move camera to player
@@ -140,6 +142,7 @@ public class Gunner : Player
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = true;
+        Game.Instance.stayButton.GetComponent<Button>().interactable = true;
     }
 
     void PresentRotatingOptions()
@@ -168,7 +171,13 @@ public class Gunner : Player
                 if (hit.collider.gameObject.GetComponent<Knifer>())
                 {
                     Knifer knifer = hit.collider.gameObject.GetComponent<Knifer>();
-                    knifer.Die();
+                    //Dont show knifer if it is already dead
+                    if(knifer.curState != PlayerState.Dead)
+                    {
+                        gameObject.GetComponent<Renderer>().enabled = true;
+                        knifer.ProcessAction(PlayerAction.Die);
+                    }
+                    
                 }
             }
         }
@@ -215,5 +224,13 @@ public class Gunner : Player
     void HideExtendedCone()
     {
         playerView.gameObject.SetActive(false);
+    }
+
+    void HideKnifers()
+    {
+        foreach(Player player in players)
+        {
+
+        }
     }
 }

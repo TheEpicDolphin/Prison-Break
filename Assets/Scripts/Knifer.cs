@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Knifer : Player
 {
@@ -17,7 +18,7 @@ public class Knifer : Player
         
     }
 
-    public override void ProcessAction(PlayerAction action)
+    public override void ProcessAction(PlayerAction action, Dictionary<string, object> data = null)
     {
         switch (action)
         {
@@ -29,24 +30,40 @@ public class Knifer : Player
                 }
                 else if(curState == PlayerState.SecondMove)
                 {
-                    curState = PlayerState.EndingTurn;
+                    curState = PlayerState.ThirdMove;
+                }
+                else if (curState == PlayerState.ThirdMove)
+                {
+                    curState = PlayerState.Rotating;
                 }
 
                 Tile clickedTile = board.GetTileFromID(currentTileIdx);
                 
                 foreach (Player other in Game.Instance.players) 
                 {
-                    if (clickedTile.Idx == other.currentTileIdx) 
+                    if (clickedTile.id == other.currentTileIdx) 
                     {
                         Game.Instance.EndGame(this);
                     }
 				}
                 
                 StartCoroutine(MoveToTile(clickedTile));
-                
                 break;
+
+            case PlayerAction.Die:
+                curState = PlayerState.Dead;
+                StartCoroutine(Die());
+                break;
+
             case PlayerAction.Skip:
-                Debug.Log("none of the above");
+                curState = PlayerState.EndingTurn;
+                ExecuteState();
+                break;
+
+            case PlayerAction.Rotate:
+                Vector2 dir = (Vector2)data["dir"];
+                curState = PlayerState.EndingTurn;
+                StartCoroutine(FaceDir(dir));
                 break;
         }
     }
@@ -65,6 +82,10 @@ public class Knifer : Player
                 break;
             case PlayerState.SecondMove:
                 Debug.Log("second move");
+                PresentMovementOptions();
+                break;
+            case PlayerState.ThirdMove:
+                Debug.Log("third move");
                 PresentMovementOptions();
                 break;
             case PlayerState.Rotating:
@@ -90,8 +111,6 @@ public class Knifer : Player
             waitFlags |= 0b0001;
         });
         */
-
-        //TODO: Hide Knifers
 
 
         //Move camera to player
@@ -123,6 +142,43 @@ public class Knifer : Player
             neighborTile.gameObject.layer = 0;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         }
-        Game.Instance.watchButton.GetComponent<Button>().interactable = true;
+        Game.Instance.stayButton.GetComponent<Button>().interactable = true;
     }
+
+    void PresentRotatingOptions()
+    {
+        Game.Instance.rightButton.GetComponent<Button>().interactable = true;
+        Game.Instance.upButton.GetComponent<Button>().interactable = true;
+        Game.Instance.leftButton.GetComponent<Button>().interactable = true;
+        Game.Instance.downButton.GetComponent<Button>().interactable = true;
+    }
+
+    IEnumerator PulseImmediateCone(System.Action callback)
+    {
+        float totalT = 1.0f;
+        float t = 0.0f;
+        while (t < totalT)
+        {
+            t += Time.deltaTime;
+            yield return null;
+        }
+        callback();
+    }
+
+    IEnumerator Die()
+    {
+        Vector3 origScale = transform.localScale;
+        Vector3 targetScale = 0.01f * transform.localScale;
+        float totalT = 1.0f;
+        float t = 0.0f;
+        while (t < totalT)
+        {
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(origScale, targetScale, t/totalT);
+            yield return null;
+        }
+        gameObject.GetComponent<Renderer>().enabled = false;
+    }
+
+    
 }

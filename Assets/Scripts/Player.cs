@@ -18,7 +18,8 @@ public enum PlayerAction
     Watch,
     MoveToTile,
     Skip,
-    Rotate
+    Rotate,
+    Die
 }
 
 
@@ -73,7 +74,7 @@ public class Player : MonoBehaviour
         float t = 0.0f;
         while (t < totalT)
         {
-            transform.rotation = Quaternion.Slerp(origRotation, targetRot, Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(origRotation, targetRot, t / totalT);
 
             t += Time.deltaTime;
             yield return null;
@@ -95,7 +96,7 @@ public class Player : MonoBehaviour
         {
 
             transform.position = Vector2.Lerp(origPos, targetPos, t);
-            Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t);
+            Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t / totalT);
             t += Time.deltaTime;
             yield return null;
         }

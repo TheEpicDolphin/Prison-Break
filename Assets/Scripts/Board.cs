@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.IO;
-
+using UnityEngine.UI;
 
 public class Edge
 {
@@ -70,31 +70,12 @@ public class Tile : MonoBehaviour
             neighborTile.gameObject.layer = 2;
             neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
+        Game.Instance.watchButton.GetComponent<Button>().interactable = false;
+        Game.Instance.stayButton.GetComponent<Button>().interactable = false;
         Game.Instance.currentPlayer.ProcessAction(PlayerAction.MoveToTile);
     }
 }
 
-
-/*
-public class Watch : MonoBehaviour
-{
-    public void OnMouseDown()
-    {
-        //StartCoroutine(player.Watch(this));
-    }
-
-}
-
-public class Stay : MonoBehaviour
-{
-    public void OnMouseDown()
-    {
-        //Do nothing
-        //StartCoroutine(player.EndTurn(this));
-    }
-
-}
-*/
 
 
 public class Board : MonoBehaviour
