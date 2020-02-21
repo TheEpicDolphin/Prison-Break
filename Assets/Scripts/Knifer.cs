@@ -43,11 +43,10 @@ public class Knifer : Player
                 {
                     if (clickedTile.id == gunner.currentTileIdx) 
                     {
-                        curState = PlayerState.Idle;
-                        Game.Instance.EndGame(this);
+                        gunner.ProcessAction(PlayerAction.Die);
                     }
 				}
-                
+                Game.Instance.CheckIfAllGunnersDead();
                 StartCoroutine(MoveToTile(clickedTile));
                 break;
 
@@ -74,6 +73,7 @@ public class Knifer : Player
         switch (curState)
         {
             case PlayerState.Idle:
+                ShowKnifers();
                 curState = PlayerState.FirstMove;
                 StartCoroutine(StartTurn());
                 break;

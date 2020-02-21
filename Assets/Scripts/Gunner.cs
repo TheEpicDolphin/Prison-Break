@@ -34,6 +34,15 @@ public class Gunner : Player
                 }
 
                 Tile clickedTile = board.GetTileFromID(currentTileIdx);
+
+                foreach (Knifer knifer in Game.Instance.knifers)
+                {
+                    if (clickedTile.id == knifer.currentTileIdx)
+                    {
+                        ProcessAction(PlayerAction.Die);
+                    }
+                }
+                Game.Instance.CheckIfAllGunnersDead();
                 StartCoroutine(MoveToTile(clickedTile));
                 
                 break;
@@ -50,6 +59,10 @@ public class Gunner : Player
                 curState = PlayerState.EndingTurn;
                 StartCoroutine(FaceDir(dir));
                 break;
+            case PlayerAction.Die:
+                curState = PlayerState.Dead;
+                StartCoroutine(Die());
+                break;
         }
     }
 
@@ -59,6 +72,7 @@ public class Gunner : Player
         {
             case PlayerState.Idle:
                 curState = PlayerState.FirstMove;
+                HideKnifers();
                 StartCoroutine(StartTurn());
                 break;
             case PlayerState.FirstMove:
@@ -77,8 +91,11 @@ public class Gunner : Player
                 Debug.Log("Ending turn...");
                 curState = PlayerState.Idle;
                 Game.Instance.NextTurn();
-                ShowKnifers();
+                
                 //StartCoroutine(EndTurn(clickedTile));
+                break;
+            case PlayerState.Dead:
+                Game.Instance.NextTurn();
                 break;
         }
     }
@@ -93,9 +110,6 @@ public class Gunner : Player
             waitFlags |= 0b0001;
         });
         */
-
-        //TODO: Hide Knifers
-        HideKnifers();
 
 
         //Move camera to player
@@ -193,6 +207,7 @@ public class Gunner : Player
         yield return new WaitForSeconds(3);
 
         HideExtendedCone();
+        Game.Instance.CheckIfAllKnifersDead();
 
         this.ExecuteState();
     }
@@ -223,7 +238,8 @@ public class Gunner : Player
         GameObject playerViewGO = new GameObject();
         this.playerView = playerViewGO.AddComponent<LineRenderer>();
         this.playerView.material = new Material(Shader.Find("Sprites/Default"));
-        this.playerView.widthMultiplier = 0.1f;
+        this.playerView.material.color = Color.yellow;
+        this.playerView.widthMultiplier = 0.05f;
         this.playerView.positionCount = extendedConeHull.Count;
         this.playerView.SetPositions(vertices);
 
@@ -234,23 +250,18 @@ public class Gunner : Player
         playerView.gameObject.SetActive(false);
     }
 
-    void HideKnifers()
+    IEnumerator Die()
     {
-        foreach(Knifer knifer in Game.Instance.knifers)
+        Vector3 origScale = transform.localScale;
+        Vector3 targetScale = 0.01f * transform.localScale;
+        float totalT = 1.0f;
+        float t = 0.0f;
+        while (t < totalT)
         {
-            knifer.GetComponent<Renderer>().enabled = false;
+            t += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(origScale, targetScale, t / totalT);
+            yield return null;
         }
-    }
-
-    void ShowKnifers()
-    {
-        foreach (Knifer knifer in Game.Instance.knifers)
-        {
-            if(knifer.curState != PlayerState.Dead)
-            {
-                knifer.GetComponent<Renderer>().enabled = true;
-            }
-            
-        }
+        gameObject.GetComponent<Renderer>().enabled = false;
     }
 }

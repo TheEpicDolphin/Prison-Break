@@ -102,11 +102,46 @@ public class Game : MonoBehaviour
         this.waitFlags = 0b0001;
     }
 
-    public void EndGame(Player winner)
+    public void EndGame(string winner)
     {  
         //display current player as winner
         StopCoroutine(gameLoop);
+        Debug.Log(winner + " have won!");
         //Game ended
+    }
+
+    public void CheckIfAllGunnersDead()
+    {
+        int numGunners = gunners.Length;
+        int gunnersDead = 0;
+        foreach(Gunner gunner in gunners)
+        {
+            if(gunner.curState == PlayerState.Dead)
+            {
+                gunnersDead += 1;
+            }
+        }
+        if(gunnersDead == numGunners)
+        {
+            EndGame("Knifers");
+        }
+    }
+
+    public void CheckIfAllKnifersDead()
+    {
+        int numKnifers = knifers.Length;
+        int knifersDead = 0;
+        foreach (Knifer knifer in knifers)
+        {
+            if (knifer.curState == PlayerState.Dead)
+            {
+                knifersDead += 1;
+            }
+        }
+        if (knifersDead == numKnifers)
+        {
+            EndGame("Gunners");
+        }
     }
 
     /*
@@ -121,7 +156,7 @@ public class Game : MonoBehaviour
         self.endTurnButton.show()
     */
 
-    
+
 }
 
 

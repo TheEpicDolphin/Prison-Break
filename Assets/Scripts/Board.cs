@@ -285,11 +285,14 @@ public class Board : MonoBehaviour
             tile.gameObject.transform.position = tile.center;
             // Set up game object with mesh;
             tile.gameObject.AddComponent<MeshRenderer>();
+            tile.gameObject.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
             tile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
             MeshFilter tileMeshFilter = tile.gameObject.AddComponent<MeshFilter>();
             tileMeshFilter.mesh = CreateTileMesh();
             tile.gameObject.AddComponent<BoxCollider2D>();
             tile.gameObject.layer = 2;
+
+            
 
             for (int j = 0; j < tile.walls.Count; j++)
             {
@@ -305,6 +308,7 @@ public class Board : MonoBehaviour
                 wallGO.transform.up = edgeDir;
                 // Set up game object with mesh;
                 wallGO.AddComponent<MeshRenderer>();
+                wallGO.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
                 wallGO.GetComponent<MeshRenderer>().material.color = Color.black;
                 MeshFilter wallMeshFilter = wallGO.AddComponent<MeshFilter>();
                 wallMeshFilter.mesh = CreateWallMesh(edgeDir);

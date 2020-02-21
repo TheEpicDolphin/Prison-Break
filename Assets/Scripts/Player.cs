@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
     public void Setup()
     {
         Tile startingTile = board.GetTileFromID(currentTileIdx);
-        transform.position = startingTile.center;
+        transform.position = new Vector3(startingTile.center.x, startingTile.center.y, transform.position.z);
         transform.up = Vector2.up;
     }
 
@@ -86,16 +86,16 @@ public class Player : MonoBehaviour
     
     public IEnumerator MoveToTile(Tile tile)
     {
-        Vector2 origPos = transform.position;
+        Vector3 origPos = transform.position;
         Vector3 origCamPos = Camera.main.transform.position;
-        Vector2 targetPos = tile.center;
+        Vector3 targetPos = new Vector3(tile.center.x, tile.center.y, transform.position.z);
         Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, Camera.main.transform.position.z);
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
 
-            transform.position = Vector2.Lerp(origPos, targetPos, t);
+            transform.position = Vector3.Lerp(origPos, targetPos, t);
             Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t / totalT);
             t += Time.deltaTime;
             yield return null;
@@ -103,6 +103,26 @@ public class Player : MonoBehaviour
         transform.position = targetPos;
         Camera.main.transform.position = targetCamPos;
         this.ExecuteState();
+    }
+
+    public void HideKnifers()
+    {
+        foreach (Knifer knifer in Game.Instance.knifers)
+        {
+            knifer.GetComponent<Renderer>().enabled = false;
+        }
+    }
+
+    public void ShowKnifers()
+    {
+        foreach (Knifer knifer in Game.Instance.knifers)
+        {
+            if (knifer.curState != PlayerState.Dead)
+            {
+                knifer.GetComponent<Renderer>().enabled = true;
+            }
+
+        }
     }
 
 }
