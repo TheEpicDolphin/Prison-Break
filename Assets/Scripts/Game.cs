@@ -23,9 +23,11 @@ public class Game : MonoBehaviour
         }
     }
 
-    //public Player[] players;
-    public Gunner[] gunners;
-    public Knifer[] knifers;
+    //public Gunner[] gunners;
+    //public Knifer[] knifers;
+    public List<Gunner> gunners = new List<Gunner>();
+    public List<Knifer> knifers = new List<Knifer>();
+
     bool gameStarted = false;
     public Player currentPlayer;
 
@@ -114,7 +116,7 @@ public class Game : MonoBehaviour
 
     public void CheckIfAllGunnersDead()
     {
-        int numGunners = gunners.Length;
+        int numGunners = gunners.Count;
         int gunnersDead = 0;
         foreach(Gunner gunner in gunners)
         {
@@ -131,7 +133,7 @@ public class Game : MonoBehaviour
 
     public void CheckIfAllKnifersDead()
     {
-        int numKnifers = knifers.Length;
+        int numKnifers = knifers.Count;
         int knifersDead = 0;
         foreach (Knifer knifer in knifers)
         {

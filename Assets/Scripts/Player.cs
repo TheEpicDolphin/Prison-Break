@@ -33,9 +33,10 @@ public class Player : MonoBehaviour
     public PlayerState curState;
 
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
         curState = PlayerState.Idle;
+        board = GameObject.Find("Board").GetComponent<Board>();
     }
 
     // Update is called once per frame
@@ -60,12 +61,13 @@ public class Player : MonoBehaviour
      */
     public void Setup()
     {
+        Debug.Log(board);
         Tile startingTile = board.GetTileFromID(currentTileIdx);
         transform.position = new Vector3(startingTile.center.x, startingTile.center.y, transform.position.z);
         transform.up = Vector2.up;
     }
 
-    public IEnumerator FaceDir(Vector2 targetDir)
+    protected IEnumerator FaceDir(Vector2 targetDir)
     {
         Quaternion origRotation = transform.rotation;
         Quaternion targetRot = Quaternion.LookRotation(transform.forward, new Vector3(targetDir.x, targetDir.y, 0.0f));
@@ -83,8 +85,8 @@ public class Player : MonoBehaviour
 
         this.ExecuteState();
     }
-    
-    public IEnumerator MoveToTile(Tile tile)
+
+    protected IEnumerator MoveToTile(Tile tile)
     {
         Vector3 origPos = transform.position;
         Vector3 origCamPos = Camera.main.transform.position;
@@ -105,7 +107,7 @@ public class Player : MonoBehaviour
         this.ExecuteState();
     }
 
-    public void HideKnifers()
+    protected void HideKnifers()
     {
         foreach (Knifer knifer in Game.Instance.knifers)
         {
@@ -113,7 +115,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void ShowKnifers()
+    protected void ShowKnifers()
     {
         foreach (Knifer knifer in Game.Instance.knifers)
         {

@@ -53,7 +53,7 @@ public class Tile : MonoBehaviour
     public Vector2 center;
     public List<Edge> walls;
     public int id;
-
+    public bool isExit;
 
     public Tile(int id, Vector2 center, List<Edge> walls)
     {
@@ -110,7 +110,8 @@ public class Board : MonoBehaviour
         tiles = new Tile[numRows * numCols];
         wallsGOs = new List<GameObject>();
 
-        ParseBoardASCIIArt("board_ascii.txt");
+        //ParseBoardASCIIArt("board_ascii.txt");
+        ParseBoardASCIIArt("board1.txt");
         CreateBoard();
     }
 
@@ -130,7 +131,6 @@ public class Board : MonoBehaviour
         */
     }
 
-
     void ParseBoardASCIIArt(string fileName)
     {
         var sr = new StreamReader(Application.dataPath + "/" + fileName);
@@ -138,54 +138,76 @@ public class Board : MonoBehaviour
         sr.Close();
 
         string[] lines = fileContents.Split("\n"[0]);
-        for (int i = 0; i < lines.Length; i++)
+        System.Array.Reverse(lines);
+
+        for (int i = 0; i < lines.Length; i+=3)
         {
-            string row = lines[numRows - 1 - i];
-            for(int c = 0; c < row.Length - 2; c+=2)
+            int r = i / 3;
+            for (int j = 0; j < lines[i].Length - 2; j+=4)
             {
-                int j = c / 2;
-                Vector2 tileCenter = new Vector2(j * tileWidth + tileWidth/2, i * tileHeight + tileHeight / 2);
+                int c = j / 4;
+                Vector2 tileCenter = new Vector2(c * tileWidth + tileWidth / 2, r * tileHeight + tileHeight / 2);
                 List<Edge> walls = new List<Edge>();
-                if(row[c] == '|')
+                if (lines[i][j] == '|' && lines[i + 1][j] == '|' && lines[i + 2][j] == '|')
                 {
-                    walls.Add(new Edge(new Vector2(j * tileWidth, i * tileHeight), new Vector2(j * tileWidth, (i + 1) * tileHeight)));
+                    walls.Add(new Edge(new Vector2(c * tileWidth, r * tileHeight), new Vector2(c * tileWidth, (r + 1) * tileHeight)));
                 }
                 else
                 {
-                    if(j > 0)
+                    if (c > 0)
                     {
-                        adjList[j + i * numCols].Add(j - 1 + i * numCols);
-                        adjList[j - 1 + i * numCols].Add(j + i * numCols);
+                        adjList[c + r * numCols].Add(c - 1 + r * numCols);
+                        adjList[c - 1 + r * numCols].Add(c + r * numCols);
                     }
                 }
-                if (row[c + 1] == '_')
+                if (lines[i][j + 1] == '_' && lines[i][j + 2] == '_' && lines[i][j + 3] == '_')
                 {
-                    walls.Add(new Edge(new Vector2(j * tileWidth, i * tileHeight), new Vector2((j + 1) * tileWidth, i * tileHeight)));
+                    walls.Add(new Edge(new Vector2(c * tileWidth, r * tileHeight), new Vector2((c + 1) * tileWidth, r * tileHeight)));
                 }
                 else
                 {
-                    if (i > 0)
+                    if (r > 0)
                     {
-                        adjList[j + i * numCols].Add(j + (i - 1) * numCols);
-                        adjList[j + (i -1) * numCols].Add(j + i * numCols);
+                        adjList[c + r * numCols].Add(c + (r - 1) * numCols);
+                        adjList[c + (r - 1) * numCols].Add(c + r * numCols);
                     }
                 }
 
-                if(i == numRows - 1)
+                if (r == numRows - 1)
                 {
-                    walls.Add(new Edge(new Vector2(j * tileWidth, (i + 1) * tileHeight), new Vector2((j + 1) * tileWidth, (i + 1) * tileHeight)));
+                    walls.Add(new Edge(new Vector2(c * tileWidth, (r + 1) * tileHeight), new Vector2((c + 1) * tileWidth, (r + 1) * tileHeight)));
                 }
 
-                if (j == numCols - 1)
+                if (c == numCols - 1)
                 {
-                    walls.Add(new Edge(new Vector2((j + 1) * tileWidth, i * tileHeight), new Vector2((j + 1) * tileWidth, (i + 1) * tileHeight)));
+                    walls.Add(new Edge(new Vector2((c + 1) * tileWidth, r * tileHeight), new Vector2((c + 1) * tileWidth, (r + 1) * tileHeight)));
                 }
+
                 GameObject tileGO = new GameObject();
                 Tile tile = tileGO.AddComponent<Tile>();
-                tile.id = j + i * numCols;
+                tile.id = c + r * numCols;
                 tile.center = tileCenter;
                 tile.walls = walls;
-                this.tiles[j + i * numCols] = tile;
+                tile.isExit = false;
+                this.tiles[c + r * numCols] = tile;
+
+                if (lines[i + 1][j + 2] == 'K')
+                {
+                    Knifer knifer = (Knifer)Instantiate(Resources.Load("Players/knifer", typeof(Knifer)));
+                    knifer.currentTileIdx = tile.id;
+                    Game.Instance.knifers.Add(knifer);
+                }
+                else if (lines[i + 1][j + 2] == 'G')
+                {
+                    Gunner gunner = (Gunner)Instantiate(Resources.Load("Players/gunner", typeof(Gunner)));
+                    gunner.currentTileIdx = tile.id;
+                    Game.Instance.gunners.Add(gunner);
+                }
+                else if (lines[i + 1][j + 2] == 'O')
+                {
+                    tile.isExit = true;
+                }
+
             }
         }
 

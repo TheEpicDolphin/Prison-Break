@@ -7,9 +7,11 @@ public class Gunner : Player
 {
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
         gameObject.layer = 2;
+        transform.up = Vector2.up;
+        base.Start();
     }
 
     // Update is called once per frame
