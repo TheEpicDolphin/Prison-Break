@@ -37,7 +37,6 @@ public class Player : MonoBehaviour
     protected void Start()
     {
         curState = PlayerState.Idle;
-        board = GameObject.Find("Board").GetComponent<Board>();
     }
 
     // Update is called once per frame
@@ -60,9 +59,9 @@ public class Player : MonoBehaviour
      *  Setup starting position and rotation for each player 
      * 
      */
-    public void Setup()
+    protected void Setup()
     {
-        Debug.Log(board);
+        curState = PlayerState.Idle;
         Tile startingTile = board.GetTileFromID(currentTileIdx);
         transform.position = new Vector3(startingTile.center.x, startingTile.center.y, transform.position.z);
         transform.up = Vector2.up;

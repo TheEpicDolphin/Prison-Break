@@ -27,6 +27,7 @@ public class Game : MonoBehaviour
     public List<Knifer> knifers = new List<Knifer>();
 
     bool gameStarted = false;
+    Board board;
     public Player currentPlayer;
 
     public GameObject watchButton;
@@ -51,7 +52,8 @@ public class Game : MonoBehaviour
         upButton.GetComponent<Button>().interactable = false;
         leftButton.GetComponent<Button>().interactable = false;
         downButton.GetComponent<Button>().interactable = false;
-
+        board = gameObject.GetComponent<Board>();
+        
     }
 
     // Update is called once per frame
@@ -59,8 +61,9 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) && !gameStarted)
         {
-            //StartGame();
+            ResetGame();
 
+            
             foreach (Gunner gunner in gunners)
             {
                 gunner.Setup();
@@ -76,7 +79,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    void StartGame()
+    void ResetGame()
     {
         watchButton.GetComponent<Button>().interactable = false;
         stayButton.GetComponent<Button>().interactable = false;
@@ -96,6 +99,8 @@ public class Game : MonoBehaviour
             Destroy(knifer.gameObject);
         }
         knifers = new List<Knifer>();
+
+        board.ResetBoard();
     }
 
     IEnumerator GameLoop()
@@ -132,6 +137,7 @@ public class Game : MonoBehaviour
     {  
         //display current player as winner
         StopCoroutine(gameLoop);
+        gameStarted = false;
         Debug.Log(winner + " have won!");
         //Game ended
     }

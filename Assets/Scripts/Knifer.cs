@@ -13,6 +13,12 @@ public class Knifer : Player
         base.Start();
     }
 
+    public new void Setup()
+    {
+        gameObject.layer = 2;
+        base.Setup();
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -9,9 +9,13 @@ public class Gunner : Player
     // Start is called before the first frame update
     new void Start()
     {
+
+    }
+
+    public new void Setup()
+    {
         gameObject.layer = 2;
-        transform.up = Vector2.up;
-        base.Start();
+        base.Setup();
     }
 
     // Update is called once per frame
@@ -147,7 +151,7 @@ public class Gunner : Player
     {
         yield return new WaitForSeconds(0.5f);
         float radius = 2.0f;
-        ShowImmediateViewCone(radius);
+        ShowImmediateViewCone(radius, 3.0f);
 
         yield return new WaitForSeconds(0.5f);
         List<Knifer> nearbyKnifers = new List<Knifer>();
@@ -170,7 +174,7 @@ public class Gunner : Player
         }
 
         yield return new WaitForSeconds(0.5f);
-        HideViewCone();
+
         yield return new WaitForSeconds(0.5f);
 
         callback();
@@ -200,7 +204,7 @@ public class Gunner : Player
     IEnumerator Watch()
     {
 
-        ShowExtendedViewCone();
+        ShowExtendedViewCone(4.0f);
         yield return new WaitForSeconds(2);
 
         //Reveal knifers. These knifers will die
@@ -215,11 +219,13 @@ public class Gunner : Player
             float theta2 = Vector3.SignedAngle(leftFunnel, new Vector3(dir.x, dir.y, 0), Vector3.back);
             if (theta1 >= 0.0f && theta2 >= 0.0f)
             {
+                knifer.gameObject.layer = 0;
                 RaycastHit2D hit = Physics2D.Raycast(origin, dir);
                 Debug.DrawRay(origin, dir, Color.red, 2.0f);
                 if (hit)
                 {
-
+                    Debug.Log(hit.collider.gameObject.name);
+                    Debug.Log(hit.collider.gameObject.layer);
                     //Dont show knifer if it is already dead
                     if (knifer.curState != PlayerState.Dead && hit.collider.gameObject.GetInstanceID() == knifer.gameObject.GetInstanceID())
                     {
@@ -227,13 +233,13 @@ public class Gunner : Player
                         knifer.ProcessAction(PlayerAction.Die);
                     }
                 }
+                knifer.gameObject.layer = 2;
             }
             
         }
 
         yield return new WaitForSeconds(2);
 
-        HideViewCone();
         if (Game.Instance.CheckIfAllKnifersDead())
         {
             curState = PlayerState.Inactive;
@@ -254,7 +260,7 @@ public class Gunner : Player
         return board.ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
     }
 
-    void ShowExtendedViewCone()
+    void ShowExtendedViewCone(float duration)
     {
         List<Vector2> extendedConeHull = GetExtendedCone();
         extendedConeHull.Add(extendedConeHull[0]);
@@ -266,16 +272,17 @@ public class Gunner : Player
         }
 
         GameObject playerViewGO = new GameObject();
-        this.playerView = playerViewGO.AddComponent<LineRenderer>();
-        this.playerView.material = new Material(Shader.Find("Unlit/Color"));
-        this.playerView.material.color = Color.yellow;
-        this.playerView.widthMultiplier = 0.05f;
-        this.playerView.positionCount = extendedConeHull.Count;
-        this.playerView.SetPositions(vertices);
-
+        playerViewGO.layer = 2;
+        LineRenderer lineRend = playerViewGO.AddComponent<LineRenderer>();
+        lineRend.material = new Material(Shader.Find("Unlit/Color"));
+        lineRend.material.color = Color.yellow;
+        lineRend.widthMultiplier = 0.05f;
+        lineRend.positionCount = extendedConeHull.Count;
+        lineRend.SetPositions(vertices);
+        Destroy(playerViewGO, duration);
     }
 
-    void ShowImmediateViewCone(float radius)
+    void ShowImmediateViewCone(float radius, float duration)
     {
         List<Vector3> immediateConeHull = new List<Vector3>();
         float theta = 0.0f;
@@ -289,18 +296,14 @@ public class Gunner : Player
         immediateConeHull.Add(immediateConeHull[0]);
 
         GameObject playerViewGO = new GameObject();
-        this.playerView = playerViewGO.AddComponent<LineRenderer>();
-        this.playerView.material = new Material(Shader.Find("Sprites/Default"));
-        this.playerView.material.color = Color.cyan;
-        this.playerView.widthMultiplier = 0.05f;
-        this.playerView.positionCount = immediateConeHull.Count;
-        this.playerView.SetPositions(immediateConeHull.ToArray());
-
-    }
-
-    void HideViewCone()
-    {
-        playerView.gameObject.SetActive(false);
+        playerViewGO.layer = 2;
+        LineRenderer lineRend = playerViewGO.AddComponent<LineRenderer>();
+        lineRend.material = new Material(Shader.Find("Sprites/Default"));
+        lineRend.material.color = Color.cyan;
+        lineRend.widthMultiplier = 0.05f;
+        lineRend.positionCount = immediateConeHull.Count;
+        lineRend.SetPositions(immediateConeHull.ToArray());
+        Destroy(playerViewGO, duration);
     }
 
     IEnumerator Die()

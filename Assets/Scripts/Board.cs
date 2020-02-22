@@ -124,17 +124,36 @@ public class Board : MonoBehaviour
         wallLength = tileHeight;
 
         adjList = new List<int>[numRows * numCols];
-        for(int i = 0; i < adjList.Length; i++)
+        tiles = new Tile[numRows * numCols];
+        wallsGOs = new List<GameObject>();
+    }
+
+    public void ResetBoard()
+    {
+        foreach(Tile tile in tiles)
+        {
+            if (tile)
+            {
+                Destroy(tile.gameObject);
+            }
+        }
+
+        foreach (GameObject wallsGO in wallsGOs)
+        {
+            Destroy(wallsGO);
+        }
+
+        adjList = new List<int>[numRows * numCols];
+        for (int i = 0; i < adjList.Length; i++)
         {
             adjList[i] = new List<int>();
         }
         tiles = new Tile[numRows * numCols];
         wallsGOs = new List<GameObject>();
-
-        //ParseBoardASCIIArt("board_ascii.txt");
         ParseBoardASCIIArt("board1.txt");
         CreateBoard();
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -216,12 +235,15 @@ public class Board : MonoBehaviour
                 {
                     Knifer knifer = (Knifer)Instantiate(Resources.Load("Players/knifer", typeof(Knifer)));
                     knifer.currentTileIdx = tile.id;
+                    knifer.board = this;
                     Game.Instance.knifers.Add(knifer);
+                    
                 }
                 else if (lines[i + 1][j + 2] == 'G')
                 {
                     Gunner gunner = (Gunner)Instantiate(Resources.Load("Players/gunner", typeof(Gunner)));
                     gunner.currentTileIdx = tile.id;
+                    gunner.board = this;
                     Game.Instance.gunners.Add(gunner);
                 }
                 else if (lines[i + 1][j + 2] == 'O')
@@ -273,29 +295,6 @@ public class Board : MonoBehaviour
             new Vector2(-wallWidth/2, wallLength/2)
         };
 
-        // Use the triangulator to get indices for creating triangles
-        Triangulator tr = new Triangulator(vertices2D);
-        int[] indices = tr.Triangulate();
-
-        // Create the Vector3 vertices
-        Vector3[] vertices = new Vector3[vertices2D.Length];
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] = new Vector3(vertices2D[i].x, vertices2D[i].y, 0);
-        }
-
-        // Create the mesh
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices;
-        mesh.triangles = indices;
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        return mesh;
-    }
-
-    private Mesh CreateViewMesh(Vector2[] vertices2D)
-    {
         // Use the triangulator to get indices for creating triangles
         Triangulator tr = new Triangulator(vertices2D);
         int[] indices = tr.Triangulate();
