@@ -39,12 +39,20 @@ public class Gunner : Player
 
                 foreach (Knifer knifer in Game.Instance.knifers)
                 {
-                    if (clickedTile.id == knifer.currentTileIdx)
+                    if (clickedTile.id == knifer.currentTileIdx && knifer.curState != PlayerState.Dead)
                     {
                         ProcessAction(PlayerAction.Die);
+                        break;
                     }
                 }
-                Game.Instance.CheckIfAllGunnersDead();
+                if (!Game.Instance.CheckIfAllGunnersDead())
+                {
+                    if (clickedTile.isExit)
+                    {
+                        Game.Instance.GunnerReachedExit();
+                        curState = PlayerState.Inactive;
+                    }
+                }
                 StartCoroutine(MoveToTile(clickedTile));
                 
                 break;
@@ -94,6 +102,9 @@ public class Gunner : Player
                 break;
             case PlayerState.Dead:
                 Game.Instance.NextTurn();
+                break;
+            case PlayerState.Inactive:
+                //Do nothing
                 break;
         }
     }
@@ -223,7 +234,10 @@ public class Gunner : Player
         yield return new WaitForSeconds(2);
 
         HideViewCone();
-        Game.Instance.CheckIfAllKnifersDead();
+        if (Game.Instance.CheckIfAllKnifersDead())
+        {
+            curState = PlayerState.Inactive;
+        }
 
         this.ExecuteState();
     }

@@ -47,7 +47,11 @@ public class Knifer : Player
                         gunner.ProcessAction(PlayerAction.Die);
                     }
 				}
-                Game.Instance.CheckIfAllGunnersDead();
+
+                if (Game.Instance.CheckIfAllGunnersDead())
+                {
+                    curState = PlayerState.Inactive;
+                }
                 StartCoroutine(MoveToTile(clickedTile));
                 break;
 
@@ -97,6 +101,9 @@ public class Knifer : Player
                 break;
             case PlayerState.Dead:
                 Game.Instance.NextTurn();
+                break;
+            case PlayerState.Inactive:
+                //Do nothing
                 break;
         }
     }

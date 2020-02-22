@@ -23,8 +23,6 @@ public class Game : MonoBehaviour
         }
     }
 
-    //public Gunner[] gunners;
-    //public Knifer[] knifers;
     public List<Gunner> gunners = new List<Gunner>();
     public List<Knifer> knifers = new List<Knifer>();
 
@@ -61,7 +59,9 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) && !gameStarted)
         {
-            foreach(Gunner gunner in gunners)
+            //StartGame();
+
+            foreach (Gunner gunner in gunners)
             {
                 gunner.Setup();
             }
@@ -74,6 +74,28 @@ public class Game : MonoBehaviour
             gameLoop = StartCoroutine(GameLoop());
             gameStarted = true;
         }
+    }
+
+    void StartGame()
+    {
+        watchButton.GetComponent<Button>().interactable = false;
+        stayButton.GetComponent<Button>().interactable = false;
+        rightButton.GetComponent<Button>().interactable = false;
+        upButton.GetComponent<Button>().interactable = false;
+        leftButton.GetComponent<Button>().interactable = false;
+        downButton.GetComponent<Button>().interactable = false;
+
+        foreach (Gunner gunner in gunners)
+        {
+            Destroy(gunner.gameObject);
+        }
+        gunners = new List<Gunner>();
+
+        foreach (Knifer knifer in knifers)
+        {
+            Destroy(knifer.gameObject);
+        }
+        knifers = new List<Knifer>();
     }
 
     IEnumerator GameLoop()
@@ -114,7 +136,7 @@ public class Game : MonoBehaviour
         //Game ended
     }
 
-    public void CheckIfAllGunnersDead()
+    public bool CheckIfAllGunnersDead()
     {
         int numGunners = gunners.Count;
         int gunnersDead = 0;
@@ -128,10 +150,12 @@ public class Game : MonoBehaviour
         if(gunnersDead == numGunners)
         {
             EndGame("Knifers");
+            return true;
         }
+        return false;
     }
 
-    public void CheckIfAllKnifersDead()
+    public bool CheckIfAllKnifersDead()
     {
         int numKnifers = knifers.Count;
         int knifersDead = 0;
@@ -145,7 +169,14 @@ public class Game : MonoBehaviour
         if (knifersDead == numKnifers)
         {
             EndGame("Gunners");
+            return true;
         }
+        return false;
+    }
+
+    public void GunnerReachedExit()
+    {
+        EndGame("Gunners");
     }
 
     /*

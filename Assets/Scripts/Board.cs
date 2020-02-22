@@ -68,12 +68,33 @@ public class Tile : MonoBehaviour
         foreach (Tile neighborTile in Game.Instance.tileButtons)
         {
             neighborTile.gameObject.layer = 2;
-            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            if (neighborTile.isExit)
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = new Color(255 / 255.0f, 225 / 255.0f, 0 / 255.0f);
+            }
+            else
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            }
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = false;
         Game.Instance.stayButton.GetComponent<Button>().interactable = false;
         Game.Instance.currentPlayer.ProcessAction(PlayerAction.MoveToTile);
     }
+
+    /*
+    public void OnMouseEnter()
+    {
+        gameObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+    }
+
+    public void OnMouseExit()
+    {
+        gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+    }
+    */
+    
+    
 }
 
 
@@ -307,8 +328,17 @@ public class Board : MonoBehaviour
             tile.gameObject.transform.position = tile.center;
             // Set up game object with mesh;
             tile.gameObject.AddComponent<MeshRenderer>();
-            tile.gameObject.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
-            tile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            if (tile.isExit)
+            {
+                tile.gameObject.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+                tile.gameObject.GetComponent<MeshRenderer>().material.color = new Color(255/255.0f, 225/255.0f, 0/255.0f);
+            }
+            else
+            {
+                tile.gameObject.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+                tile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            }
+            
             MeshFilter tileMeshFilter = tile.gameObject.AddComponent<MeshFilter>();
             tileMeshFilter.mesh = CreateTileMesh();
             tile.gameObject.AddComponent<BoxCollider2D>();

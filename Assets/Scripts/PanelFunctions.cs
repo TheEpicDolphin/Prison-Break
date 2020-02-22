@@ -75,7 +75,15 @@ public class PanelFunctions : MonoBehaviour
         foreach (Tile neighborTile in Game.Instance.tileButtons)
         {
             neighborTile.gameObject.layer = 2;
-            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+
+            if (neighborTile.isExit)
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = new Color(255 / 255.0f, 225 / 255.0f, 0 / 255.0f);
+            }
+            else
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            }
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = false;
         Game.Instance.stayButton.GetComponent<Button>().interactable = false;

@@ -10,7 +10,8 @@ public enum PlayerState
     ThirdMove,
     EndingTurn,
     Dead,
-    Rotating
+    Rotating,
+    Inactive
 }
 
 public enum PlayerAction
