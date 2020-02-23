@@ -22,22 +22,22 @@ public class CameraController : MonoBehaviour
             locked = false;
             transform.position += camSpeed * new Vector3(-1, 0, 0);
         }
-        else if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
             locked = false;
             transform.position += camSpeed * new Vector3(0, 1, 0);
         }
-        else if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S))
         {
             locked = false;
             transform.position += camSpeed * new Vector3(0, -1, 0);
         }
-        else if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
             locked = false;
             transform.position += camSpeed * new Vector3(1, 0, 0);
         }
-        else if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             locked = true;
         }

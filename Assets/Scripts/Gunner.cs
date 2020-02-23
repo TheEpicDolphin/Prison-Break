@@ -182,7 +182,16 @@ public class Gunner : Player
         foreach (Tile neighborTile in Game.Instance.tileButtons)
         {
             neighborTile.gameObject.layer = 0;
-            neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            //neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            if (neighborTile.isExit)
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = 0.7f * neighborTile.gameObject.GetComponent<MeshRenderer>().material.color + 0.3f * Color.green;
+            }
+            else
+            {
+                neighborTile.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            }
+            
         }
         Game.Instance.watchButton.GetComponent<Button>().interactable = true;
         Game.Instance.stayButton.GetComponent<Button>().interactable = true;
