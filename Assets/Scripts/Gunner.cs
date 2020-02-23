@@ -125,13 +125,8 @@ public class Gunner : Player
         */
 
 
-        //Move camera to player
-        waitFlags = 0b0001;
-        board.PanCameraToPlayerTile(currentTileIdx, () =>
-        {
-            waitFlags |= 0b0010;
-        });
-        yield return new WaitUntil(() => waitFlags == 0b0011);
+        //Set gunner transform as new camera target
+        Game.Instance.camController.SetTarget(transform);
 
         waitFlags = 0b0000;
         //Temporarily shows players in immediate cone in front of player

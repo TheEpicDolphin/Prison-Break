@@ -89,21 +89,21 @@ public class Player : MonoBehaviour
     protected IEnumerator MoveToTile(Tile tile)
     {
         Vector3 origPos = transform.position;
-        Vector3 origCamPos = Camera.main.transform.position;
+        //Vector3 origCamPos = Camera.main.transform.position;
         Vector3 targetPos = new Vector3(tile.center.x, tile.center.y, transform.position.z);
-        Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, Camera.main.transform.position.z);
+        //Vector3 targetCamPos = new Vector3(tile.center.x, tile.center.y, Camera.main.transform.position.z);
         float totalT = 1.0f;
         float t = 0.0f;
         while (t < totalT)
         {
 
             transform.position = Vector3.Lerp(origPos, targetPos, t);
-            Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t / totalT);
+            //Camera.main.transform.position = Vector3.Lerp(origCamPos, targetCamPos, t / totalT);
             t += Time.deltaTime;
             yield return null;
         }
         transform.position = targetPos;
-        Camera.main.transform.position = targetCamPos;
+        //Camera.main.transform.position = targetCamPos;
         this.ExecuteState();
     }
 

@@ -42,6 +42,8 @@ public class Game : MonoBehaviour
 
     Coroutine gameLoop;
 
+    public CameraController camController;
+
     uint waitFlags;
 
     private void Start()
@@ -59,7 +61,7 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.A) && !gameStarted)
+        if (Input.GetKey(KeyCode.Return) && !gameStarted)
         {
             ResetGame();
 

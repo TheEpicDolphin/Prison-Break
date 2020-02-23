@@ -106,22 +106,16 @@ public class Board : MonoBehaviour
     List<int>[] adjList;
     Tile[] tiles;
     List<GameObject> wallsGOs;
-    public Camera cam;
-    float tileWidth = 10.0f;
-    float tileHeight = 10.0f;
-    float wallWidth = 1.0f;
-    float wallLength = 10.0f;
+    float tileWidth = 1.0f;
+    float tileHeight = 1.0f;
+    float wallWidth = 0.1f;
+    float wallLength = 1.0f;
 
     //public Transform tester;
 
     // Start is called before the first frame update
     void Start()
     {
-        cam.transform.position = new Vector3(cam.orthographicSize, cam.orthographicSize, -10);
-        tileWidth = 2.0f * cam.orthographicSize / numCols;
-        tileHeight = 2.0f * cam.orthographicSize / numRows;
-        wallWidth = 0.1f * tileWidth;
-        wallLength = tileHeight;
 
         adjList = new List<int>[numRows * numCols];
         tiles = new Tile[numRows * numCols];
@@ -370,6 +364,7 @@ public class Board : MonoBehaviour
         }
     }
 
+    /*
     public void PanCameraToPlayerTile(int playerTileIdx, System.Action callback)
     {
         Tile tile = this.tiles[playerTileIdx];
@@ -390,6 +385,8 @@ public class Board : MonoBehaviour
         cam.transform.position = targetPos;
         callback();
     }
+    */
+    
 
     public Tile GetTileFromID(int currentTileID)
     {
