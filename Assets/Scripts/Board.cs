@@ -101,8 +101,8 @@ public class Tile : MonoBehaviour
 
 public class Board : MonoBehaviour
 {
-    int numRows = 5;
-    int numCols = 5;
+    int numRows = 7;
+    int numCols = 7;
     List<int>[] adjList;
     Tile[] tiles;
     List<GameObject> wallsGOs;
@@ -147,7 +147,7 @@ public class Board : MonoBehaviour
         wallsGOs = new List<GameObject>();
 
         int randi = Random.Range(0, boardFNames.Length);
-        ParseBoardASCIIArt(boardFNames[randi]);
+        ParseBoardASCIIArt(boardFNames[3]);
         CreateBoard();
     }
     
