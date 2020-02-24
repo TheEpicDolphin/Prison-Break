@@ -32,6 +32,7 @@ public class Game : MonoBehaviour
     public Player currentPlayer;
 
     public Text TimerText;
+    public Text MovesLeftText;
 
     public GameObject watchButton;
     public GameObject stayButton;
@@ -56,7 +57,7 @@ public class Game : MonoBehaviour
     uint waitFlags;
 
     private DateTime startTime;
-    private static int maxTime = 10;
+    private static int maxTime = 300;
     public int timeLeft = maxTime;
     public string timer;
 
@@ -104,6 +105,12 @@ public class Game : MonoBehaviour
         {
             EndGame(winner:"[timeout]");
         }
+        UpdateMovesLeft(currentPlayer.movesLeft);
+    }
+
+    void UpdateMovesLeft(int movesLeft)
+    {
+        MovesLeftText.text = String.Format("Moves Left: {0}", movesLeft);
     }
 
     void updateTimer()
@@ -135,7 +142,7 @@ public class Game : MonoBehaviour
 
         players = new LinkedList<Player>();
         board.ResetBoard();
-
+        startTime = DateTime.Now;
 
         for(int i = 0; i < gunners.Count; i++)
         {
@@ -167,7 +174,16 @@ public class Game : MonoBehaviour
 
     public void NextTurn()
     {
+        for (int i = 0; i < gunners.Count; i++)
+        {
+            gunners[i].movesLeft = 2;
+        }
+        for (int i = 0; i < knifers.Count; i++)
+        {
+            knifers[i].movesLeft = 3;
+        }
         this.waitFlags = 0b0001;
+
     }
 
     public void EndGame(string winner)

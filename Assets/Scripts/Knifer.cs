@@ -17,6 +17,7 @@ public class Knifer : Player
     {
         gameObject.layer = 2;
         base.Setup();
+        this.movesLeft = 3;
     }
 
     // Update is called once per frame

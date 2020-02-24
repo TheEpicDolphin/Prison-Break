@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
         transform.position = targetPos;
         //Camera.main.transform.position = targetCamPos;
         this.ExecuteState();
+        movesLeft--;
     }
 
 
