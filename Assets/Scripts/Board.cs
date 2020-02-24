@@ -110,7 +110,7 @@ public class Board : MonoBehaviour
     float tileHeight = 1.0f;
     float wallWidth = 0.1f;
     float wallLength = 1.0f;
-    string[] boardFNames = new string[] { "board1.txt", "board2.txt", "board3.txt", "board4.txt", "board5.txt" };
+    string[] boardFNames = new string[] { "board1", "board2", "board3", "board4"};
 
     //public Transform tester;
 
@@ -146,8 +146,7 @@ public class Board : MonoBehaviour
         tiles = new Tile[numRows * numCols];
         wallsGOs = new List<GameObject>();
 
-        //int randi = Random.Range(0, boardFNames.Length);
-        int randi = 1;
+        int randi = Random.Range(0, boardFNames.Length);
         ParseBoardASCIIArt(boardFNames[randi]);
         CreateBoard();
     }
@@ -171,9 +170,9 @@ public class Board : MonoBehaviour
 
     void ParseBoardASCIIArt(string fileName)
     {
-        var sr = new StreamReader(Application.dataPath + "/" + fileName);
-        var fileContents = sr.ReadToEnd();
-        sr.Close();
+        //TextAsset textAsset = Resources.Load("Boards/" + fileName) as TextAsset;
+        var textAsset = Resources.Load("Boards/" + fileName) as TextAsset;
+        var fileContents = textAsset.text;
 
         string[] lines = fileContents.Split("\n"[0]);
         System.Array.Reverse(lines);

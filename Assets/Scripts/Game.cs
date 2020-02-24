@@ -158,7 +158,7 @@ public class Game : MonoBehaviour
 
         //Display winners
         endPanel.SetActive(true);
-        endPanelTextContainer.GetComponent<Text>().text = winner + " have won!";
+        endPanelTextContainer.GetComponent<Text>().text = winner + " have won!\nPress Enter to start a new game.";
         gameStarted = false;
     }
 
