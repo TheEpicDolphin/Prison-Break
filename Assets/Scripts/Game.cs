@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
-using System.Globalization;
 using UnityEngine.UI;
 
 
@@ -32,6 +31,8 @@ public class Game : MonoBehaviour
     LinkedListNode<Player> currentNode;
     public Player currentPlayer;
 
+    public Text TimerText;
+
     public GameObject watchButton;
     public GameObject stayButton;
 
@@ -54,6 +55,11 @@ public class Game : MonoBehaviour
 
     uint waitFlags;
 
+    private DateTime startTime;
+    private static int maxTime = 10;
+    public int timeLeft = maxTime;
+    public string timer;
+
     private void Start()
     {
         watchButton.GetComponent<Button>().interactable = false;
@@ -66,7 +72,7 @@ public class Game : MonoBehaviour
         endPanel.SetActive(false);
         startPanel.SetActive(true);
         board = gameObject.GetComponent<Board>();
-        
+        startTime = DateTime.Now;
     }
 
     // Update is called once per frame
@@ -91,6 +97,19 @@ public class Game : MonoBehaviour
             gameLoop = StartCoroutine(GameLoop());
             gameStarted = true;
         }
+
+        timeLeft = Math.Max(0, maxTime - (int)(DateTime.Now - startTime).TotalSeconds);
+        updateTimer();
+        if (timeLeft == 0)
+        {
+            EndGame(winner:"[timeout]");
+        }
+    }
+
+    void updateTimer()
+    {
+        string timer = String.Format("{0}:{1}", timeLeft / 60, (timeLeft % 60).ToString("D2"));
+        TimerText.text = timer;
     }
 
     void ResetGame()
@@ -158,7 +177,13 @@ public class Game : MonoBehaviour
 
         //Display winners
         endPanel.SetActive(true);
-        endPanelTextContainer.GetComponent<Text>().text = winner + " have won!\nPress Enter to start a new game.";
+        if (winner == "[timeout]")
+        {
+            endPanelTextContainer.GetComponent<Text>().text = "Time ran out! Press Enter to start a new game.";
+        } else
+        {
+            endPanelTextContainer.GetComponent<Text>().text = winner + " have won!\nPress Enter to start a new game.";
+        }
         gameStarted = false;
     }
 

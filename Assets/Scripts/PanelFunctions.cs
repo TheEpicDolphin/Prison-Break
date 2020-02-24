@@ -32,7 +32,7 @@ public class PanelFunctions : MonoBehaviour
         //TransitionPanel.SetActive(false);
     }
 
-    void Update() {}
+    void Update() { }
 
     public void Watch()
     {
