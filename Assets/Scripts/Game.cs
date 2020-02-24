@@ -138,7 +138,7 @@ public class Game : MonoBehaviour
         {
             waitFlags = 0b0000;
             currentPlayer = currentNode.Value;
-            Debug.Log(currentPlayer.gameObject.name + " starting turn...");
+            //Debug.Log(currentPlayer.gameObject.name + " starting turn...");
             currentPlayer.ExecuteState();
             yield return new WaitUntil(() => waitFlags == 0b0001);
             currentNode = currentNode.Next ?? currentNode.List.First;
@@ -209,8 +209,6 @@ public class Game : MonoBehaviour
     {
         
         LinkedListNode<Player> nextNode = currentNode.Next ?? currentNode.List.First;
-        Debug.Log(player.playerName);
-        Debug.Log(nextNode.Value.playerName);
         transitionPanelTextContainer.GetComponent<Text>().text = player.playerName + ", close your eyes.\n" + nextNode.Value.playerName + ", are you ready?";
         transitionPanel.SetActive(true);
     }

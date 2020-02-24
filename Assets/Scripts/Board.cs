@@ -110,6 +110,7 @@ public class Board : MonoBehaviour
     float tileHeight = 1.0f;
     float wallWidth = 0.1f;
     float wallLength = 1.0f;
+    string[] boardFNames = new string[] { "board1.txt", "board2.txt", "board3.txt", "board4.txt", "board5.txt" };
 
     //public Transform tester;
 
@@ -144,7 +145,10 @@ public class Board : MonoBehaviour
         }
         tiles = new Tile[numRows * numCols];
         wallsGOs = new List<GameObject>();
-        ParseBoardASCIIArt("board1.txt");
+
+        //int randi = Random.Range(0, boardFNames.Length);
+        int randi = 1;
+        ParseBoardASCIIArt(boardFNames[randi]);
         CreateBoard();
     }
     
@@ -506,15 +510,15 @@ public class Board : MonoBehaviour
             Vector2 dir1 = (Quaternion.AngleAxis(angleRange.t1, new Vector3(0, 0, 1)) * rightFunnel).normalized;
             Vector2 s1 = angleRange.edge.Intersect(currentPos, dir1);
             hull.Add(s1);
-            Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(s1.x, s1.y, -0.5f), Color.magenta);
+            //Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(s1.x, s1.y, -0.5f), Color.magenta);
 
             Vector2 dir2 = (Quaternion.AngleAxis(angleRange.t2, new Vector3(0, 0, 1)) * rightFunnel).normalized;
             Vector2 s2 = angleRange.edge.Intersect(currentPos, dir2);
             hull.Add(s2);
-            Debug.DrawLine(new Vector3(s1.x, s1.y, -0.5f), new Vector3(s2.x, s2.y, -0.5f), Color.magenta);
+            //Debug.DrawLine(new Vector3(s1.x, s1.y, -0.5f), new Vector3(s2.x, s2.y, -0.5f), Color.magenta);
             last = s2;
         }
-        Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(currentPos.x, currentPos.y, -0.5f), Color.magenta);
+        //Debug.DrawLine(new Vector3(last.x, last.y, -0.5f), new Vector3(currentPos.x, currentPos.y, -0.5f), Color.magenta);
         return hull;
     }
 

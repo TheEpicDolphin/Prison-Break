@@ -143,7 +143,7 @@ public class Gunner : Player
     IEnumerator PulseImmediateCone(System.Action callback)
     {
         yield return new WaitForSeconds(0.5f);
-        float radius = 2.0f;
+        float radius = 2.5f;
         ShowImmediateViewCone(radius, 3.0f);
 
         yield return new WaitForSeconds(0.5f);
@@ -223,7 +223,7 @@ public class Gunner : Player
             {
                 knifer.gameObject.layer = 0;
                 RaycastHit2D hit = Physics2D.Raycast(origin, dir);
-                Debug.DrawRay(origin, dir, Color.red, 2.0f);
+                //Debug.DrawRay(origin, dir, Color.red, 2.0f);
                 if (hit)
                 {
                     //Dont show knifer if it is already dead
@@ -254,9 +254,9 @@ public class Gunner : Player
         Vector2 playerPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 leftFunnel = (Quaternion.AngleAxis(45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
         Vector2 rightFunnel = (Quaternion.AngleAxis(-45.0f, new Vector3(0, 0, 1)) * transform.up).normalized;
-        Debug.DrawRay(transform.position, 15.0f * leftFunnel, Color.green);
-        Debug.DrawRay(transform.position, 15.0f * rightFunnel, Color.red);
-        Debug.DrawRay(transform.position, 15.0f * Vector2.right, Color.yellow);
+        //Debug.DrawRay(transform.position, 15.0f * leftFunnel, Color.green);
+        //Debug.DrawRay(transform.position, 15.0f * rightFunnel, Color.red);
+        //Debug.DrawRay(transform.position, 15.0f * Vector2.right, Color.yellow);
         return board.ConstructPlayerViewHull(playerPos2D, leftFunnel, rightFunnel);
     }
 
