@@ -75,6 +75,7 @@ public class Gunner : Player
                 break;
             case PlayerAction.Die:
                 curState = PlayerState.Dead;
+                Game.Instance.players.Remove(this);
                 StartCoroutine(Die());
                 break;
         }
@@ -86,7 +87,6 @@ public class Gunner : Player
         {
             case PlayerState.Idle:
                 curState = PlayerState.FirstMove;
-                HideKnifers();
                 StartCoroutine(StartTurn());
                 break;
             case PlayerState.FirstMove:
@@ -100,9 +100,7 @@ public class Gunner : Player
                 break;
             case PlayerState.EndingTurn:
                 curState = PlayerState.Idle;
-                Game.Instance.NextTurn();
-                
-                //StartCoroutine(EndTurn(clickedTile));
+                Game.Instance.PresentTransitionPanel(this);
                 break;
             case PlayerState.Dead:
                 Game.Instance.NextTurn();
@@ -228,8 +226,6 @@ public class Gunner : Player
                 Debug.DrawRay(origin, dir, Color.red, 2.0f);
                 if (hit)
                 {
-                    Debug.Log(hit.collider.gameObject.name);
-                    Debug.Log(hit.collider.gameObject.layer);
                     //Dont show knifer if it is already dead
                     if (knifer.curState != PlayerState.Dead && hit.collider.gameObject.GetInstanceID() == knifer.gameObject.GetInstanceID())
                     {

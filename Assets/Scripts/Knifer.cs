@@ -63,6 +63,7 @@ public class Knifer : Player
 
             case PlayerAction.Die:
                 curState = PlayerState.Dead;
+                Game.Instance.players.Remove(this);
                 StartCoroutine(Die());
                 break;
 
@@ -84,8 +85,8 @@ public class Knifer : Player
         switch (curState)
         {
             case PlayerState.Idle:
-                ShowKnifers();
                 curState = PlayerState.FirstMove;
+                Game.Instance.ShowKnifers();
                 StartCoroutine(StartTurn());
                 break;
             case PlayerState.FirstMove:
@@ -102,8 +103,8 @@ public class Knifer : Player
                 break;
             case PlayerState.EndingTurn:
                 curState = PlayerState.Idle;
-                Game.Instance.NextTurn();
-                //StartCoroutine(EndTurn(clickedTile));
+                Game.Instance.HideKnifers();
+                Game.Instance.PresentTransitionPanel(this);
                 break;
             case PlayerState.Dead:
                 Game.Instance.NextTurn();

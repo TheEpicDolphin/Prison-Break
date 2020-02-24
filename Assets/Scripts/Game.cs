@@ -23,11 +23,13 @@ public class Game : MonoBehaviour
         }
     }
 
+    public LinkedList<Player> players = new LinkedList<Player>();
     public List<Gunner> gunners = new List<Gunner>();
     public List<Knifer> knifers = new List<Knifer>();
 
     bool gameStarted = false;
     Board board;
+    LinkedListNode<Player> currentNode;
     public Player currentPlayer;
 
     public GameObject watchButton;
@@ -37,6 +39,12 @@ public class Game : MonoBehaviour
     public GameObject upButton;
     public GameObject leftButton;
     public GameObject downButton;
+
+    public GameObject startPanel;
+    public GameObject transitionPanel;
+    public GameObject transitionPanelTextContainer;
+    public GameObject endPanel;
+    public GameObject endPanelTextContainer;
 
     public List<Tile> tileButtons;
 
@@ -54,6 +62,9 @@ public class Game : MonoBehaviour
         upButton.GetComponent<Button>().interactable = false;
         leftButton.GetComponent<Button>().interactable = false;
         downButton.GetComponent<Button>().interactable = false;
+        transitionPanel.SetActive(false);
+        endPanel.SetActive(false);
+        startPanel.SetActive(true);
         board = gameObject.GetComponent<Board>();
         
     }
@@ -64,8 +75,9 @@ public class Game : MonoBehaviour
         if (Input.GetKey(KeyCode.Return) && !gameStarted)
         {
             ResetGame();
+            startPanel.SetActive(false);
+            endPanel.SetActive(false);
 
-            
             foreach (Gunner gunner in gunners)
             {
                 gunner.Setup();
@@ -102,31 +114,35 @@ public class Game : MonoBehaviour
         }
         knifers = new List<Knifer>();
 
+        players = new LinkedList<Player>();
         board.ResetBoard();
+
+
+        for(int i = 0; i < gunners.Count; i++)
+        {
+            gunners[i].playerName = "Gunner" + i.ToString();
+            players.AddLast(gunners[i]);
+        }
+        for(int i = 0; i < knifers.Count; i++)
+        {
+            knifers[i].playerName = "Knifer" + i.ToString();
+            players.AddLast(knifers[i]);
+        }
     }
 
     IEnumerator GameLoop()
     {
+        currentNode = players.First;
+        HideKnifers();
         while (true)
         {
-            
-            foreach (Gunner gunner in gunners)
-            {
-                waitFlags = 0b0000;
-                currentPlayer = gunner;
-                Debug.Log(currentPlayer.gameObject.name + " starting turn...");
-                currentPlayer.ExecuteState();
-                yield return new WaitUntil(() => waitFlags == 0b0001);
-            }
+            waitFlags = 0b0000;
+            currentPlayer = currentNode.Value;
+            Debug.Log(currentPlayer.gameObject.name + " starting turn...");
+            currentPlayer.ExecuteState();
+            yield return new WaitUntil(() => waitFlags == 0b0001);
+            currentNode = currentNode.Next ?? currentNode.List.First;
 
-            foreach (Knifer knifer in knifers)
-            {
-                waitFlags = 0b0000;
-                currentPlayer = knifer;
-                Debug.Log(currentPlayer.gameObject.name + " starting turn...");
-                currentPlayer.ExecuteState();
-                yield return new WaitUntil(() => waitFlags == 0b0001);
-            }
         }
     }
 
@@ -137,11 +153,13 @@ public class Game : MonoBehaviour
 
     public void EndGame(string winner)
     {  
-        //display current player as winner
+        //Stop game loop
         StopCoroutine(gameLoop);
+
+        //Display winners
+        endPanel.SetActive(true);
+        endPanelTextContainer.GetComponent<Text>().text = winner + " have won!";
         gameStarted = false;
-        Debug.Log(winner + " have won!");
-        //Game ended
     }
 
     public bool CheckIfAllGunnersDead()
@@ -185,6 +203,36 @@ public class Game : MonoBehaviour
     public void GunnerReachedExit()
     {
         EndGame("Gunners");
+    }
+
+    public void PresentTransitionPanel(Player player)
+    {
+        
+        LinkedListNode<Player> nextNode = currentNode.Next ?? currentNode.List.First;
+        Debug.Log(player.playerName);
+        Debug.Log(nextNode.Value.playerName);
+        transitionPanelTextContainer.GetComponent<Text>().text = player.playerName + ", close your eyes.\n" + nextNode.Value.playerName + ", are you ready?";
+        transitionPanel.SetActive(true);
+    }
+
+    public void HideKnifers()
+    {
+        foreach (Knifer knifer in Game.Instance.knifers)
+        {
+            knifer.GetComponent<Renderer>().enabled = false;
+        }
+    }
+
+    public void ShowKnifers()
+    {
+        foreach (Knifer knifer in Game.Instance.knifers)
+        {
+            if (knifer.curState != PlayerState.Dead)
+            {
+                knifer.GetComponent<Renderer>().enabled = true;
+            }
+
+        }
     }
 
     /*

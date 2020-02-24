@@ -107,24 +107,6 @@ public class Player : MonoBehaviour
         this.ExecuteState();
     }
 
-    protected void HideKnifers()
-    {
-        foreach (Knifer knifer in Game.Instance.knifers)
-        {
-            knifer.GetComponent<Renderer>().enabled = false;
-        }
-    }
 
-    protected void ShowKnifers()
-    {
-        foreach (Knifer knifer in Game.Instance.knifers)
-        {
-            if (knifer.curState != PlayerState.Dead)
-            {
-                knifer.GetComponent<Renderer>().enabled = true;
-            }
-
-        }
-    }
 
 }

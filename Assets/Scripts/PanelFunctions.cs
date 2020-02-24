@@ -98,11 +98,11 @@ public class PanelFunctions : MonoBehaviour
 
     }
 
-
-    public void transitionReadyButton()
+    public void TransitionToNextTurn()
     {
-        TransitionPanel.SetActive(false);
-	}
+        Game.Instance.transitionPanel.SetActive(false);
+        Game.Instance.NextTurn();
+    }
 
     public void showError(string error) {
         ErrorPanelText.text = error;
